@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.notice {
+  display: none !important;
+}
+
+#wpcontent {
+  min-height: calc(100vh - 32px);
+  @apply bg-gray-200;
+}
+
+@layer components {
+  .shimmer {
+    -webkit-mask:linear-gradient(-60deg,#000 30%,#0005,#000 70%) right/300% 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 2.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    100% {-webkit-mask-position:left}
+  }
+}

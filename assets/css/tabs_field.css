@@ -1,0 +1,253 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* item */
+.wpt-customize-control-tabs .item{
+  display: flex;
+  align-items: center;
+  padding: 7px 12px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-top: 10px;
+  transition: color .1s ease-in-out;
+  user-select: none;
+}
+
+.wpt-customize-control-tabs .blue-bg-class .item {
+  background-color: #67E8F9;
+  border-color: #22D3EE;
+}
+
+.wpt-customize-control-tabs .item .text{
+  flex-grow: 1;
+}
+
+/* control */
+.wpt-customize-control-tabs .item .control{
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+.wpt-customize-control-tabs .item .control > * + * {
+  margin-left: 5px;
+}
+
+/* form-check */
+.wpt-customize-control-tabs .item .control .form-check {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 35px;
+  height: 20px;
+  border: 1px solid rgba(0,0,0,.25);
+  border-radius: 2em;
+  margin-top: 0;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: left center;
+  outline: none;
+  transition: background-position .15s ease-in-out;
+}
+
+.wpt-customize-control-tabs .item .control .form-check::before {
+  content: none;
+}
+
+.wpt-customize-control-tabs .item .control .form-check:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  background-position: right center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.wpt-customize-control-tabs .item .control .form-check:focus{
+  box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+}
+
+/* check */
+.check input ~ * {
+  display: block !important;
+}
+.check input + .icon-show {
+  display: none !important;
+}
+
+.check input:checked ~ * {
+  display: none !important;
+}
+.check input:checked + .icon-show {
+  display: block !important;
+}
+
+.wpt-customize-control-tabs .icon-show {
+  color: #0EA5E9;
+}
+
+/* icon */
+.wpt-customize-control-tabs .icon {
+  display: inline-block;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.wpt-customize-control-tabs .icon > svg {
+  width: 100% !important;
+  height: 100% !important;
+  fill: currentColor !important;
+}
+
+.wpt-customize-control-tabs .icon-move:hover{
+  color: #D946EF;
+}
+.wpt-customize-control-tabs .icon-edit:hover{
+  color: #22C55E;
+}
+
+.wpt-customize-control-tabs .icon-del,
+.wpt-customize-control-tabs .icon-show,
+.wpt-customize-control-tabs .icon-vision {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+.wpt-customize-control-tabs .icon-del:hover{
+  color: #F43F5E;
+}
+
+/* list child */
+.list-child {
+  margin-left: 15px;
+}
+
+/* btn */
+.btn.btn-custom {
+  padding: 7px 12px;
+  background-color: #0EA5E9;
+  color: #fff;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: color .3s ease-in-out;
+}
+
+.btn.btn-custom:hover {
+  background-color: #38BDF8;
+}
+
+.wpt-btn-add-child {
+  width: max-content;
+  margin: 10px 0 0 15px;
+}
+
+/* MODAL */
+.modal-edit {
+  --left-width: 300px;
+  position: fixed;
+  left: var(--left-width);
+  top: 0;
+  width: calc(100% - var(--left-width));
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: all .3s ease-in-out;
+}
+
+.modal-edit.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-edit .content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  background: #fff;
+  padding: 1rem;
+}
+
+.modal-edit .content table {
+  width: 100%;
+}
+
+.modal-edit .content table td {
+  padding: 7px 12px;
+}
+
+.modal-edit .content table .check .icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+
+.list-icon {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -.25rem;
+  padding-top: 5px;
+}
+
+.list-icon .item-icon {
+  padding: 0 .25rem;
+  margin-bottom: 5px;
+}
+.list-icon .icon {
+  display: block;
+  padding: 5px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: 20px;
+}
+
+.list-icon .icon.active {
+  color: #0EA5E9;
+}
+
+.modal-edit .content input.custom,
+.modal-edit .content select.custom {
+  width: 100%;
+  max-width: 100%;
+}
+
+.modal-edit .btn-del {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  font-size: 30px;
+  cursor: pointer;
+}
+.modal-edit .btn-del:hover {
+  color: #F43F5E;
+}
+
+.modal-edit .editor {
+  padding-top: 1.5rem;
+}
+
+.wpt-modal-edit-child .content {
+  max-width: 540px;
+}
+
+.wpt_modal_tab_child_content {
+  width: 100%;
+}
+
+.wpt-modal-edit-child .content {
+  max-width: 540px;
+}

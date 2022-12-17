@@ -1,0 +1,33 @@
+.wpt-custom-control-title {
+  color: #191e23;
+  font-size: 14px;
+  line-height: 1.75;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.wpt-custom-control-range { 
+  display: flex;
+}
+
+.wpt-custom-control-range .custom-input-range {
+  flex-grow: 1;
+  background: transparent;
+}
+
+.wpt-custom-control-range .custom-input-text {
+  flex: none;
+  width: 50px !important;
+  margin-left: .25rem !important;
+  min-height: 24px !important;
+  height: 24px !important;
+}
+
+.wpt-custom-control-range .icon {
+  flex: none;
+  cursor: pointer;
+  margin-left: .25rem !important;
+}
+.wpt-custom-control-range .icon:hover {
+  color: #2271b1;
+}
