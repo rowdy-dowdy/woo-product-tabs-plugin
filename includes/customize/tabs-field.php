@@ -27,7 +27,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
 
     wp_enqueue_script( 'wpt-tabs-customize', VI_WOO_PRODUCT_TABS_JS.'wpt-tabs-customize.js', array('wpt-sortable'));
     wp_localize_script('wpt-tabs-customize', 'wpt_tabs_customize', [
-      'data' => json_encode($this->value()),
+      'data' => $this->value(),
       'localize' => [
         'custom_tab' => __('Custom tab', 'woo-product-tab'),
         'add_new' => __( 'Add new', 'woo-product-tabs' ),
@@ -60,7 +60,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
           <?php $this->link(); ?> 
           id="<?php echo esc_attr( $input_id ); ?>" 
           name="<?php echo esc_attr( $input_id ); ?>"
-          value="<?php echo htmlspecialchars( json_encode( $product_tabs ) ); ?>"
+          value='<?php echo esc_attr( $this->value() ); ?>'
         >
         <ul class="wpt-list"></ul>
         <div class="wpt-btn-add btn btn-custom"><?php echo __( 'Add tab', 'woo-product-tabs' ) ?></div>

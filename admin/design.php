@@ -19,6 +19,19 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
     add_action( 'customize_controls_print_scripts', array($this, 'customize_controls_print_scripts') );
     add_action( 'customize_preview_init', array($this, 'customize_live_preview') );
     add_filter( 'script_loader_tag', array( $this, 'mind_defer_scripts'), 10, 3 );
+
+    function mytheme_customize_css()
+    {
+      ?>
+        <style type="text/css">
+          .viethung-test { color: <?php echo var_dump([
+            "a" => get_theme_mod('wpt_product_tabs_params', '#000000')['wpt_title_normal_font_size'],
+            "b" => get_theme_mod('wpt_product_tabs_params', '#000000')['wpt_product_tabs']
+          ]);?>; }
+        </style>
+      <?php
+    }
+    add_action( 'wp_head', 'mytheme_customize_css');
 	}
 
   public function design_option_customize($wp_customize) {
@@ -93,7 +106,7 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 			// 'type'              => 'option',
 			// 'capability'        => 'manage_options',
 			// 'sanitize_callback' => 'sanitize_text_field',
-			'transport'         => 'postMessage',
+			'transport'         => 'refresh',
 		) );
 		$wp_customize->add_control( new Range_Field_Custom_Control(
       $wp_customize, 'wpt_product_tabs_params[wpt_title_normal_font_size]',
@@ -343,7 +356,7 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 			// 'type'              => 'option',
 			// 'capability'        => 'manage_options',
 			// 'sanitize_callback' => 'sanitize_text_field',
-			'transport'         => 'postMessage',
+			'transport'         => 'refresh',
 		) ); // dummy
 
     $wp_customize->add_control( new Tabs_Field_Custom_Control( 
@@ -357,13 +370,13 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 	}
 
   public function customize_live_preview() {
-    // wp_enqueue_script( 
-		//   'wpt-customize',
-		//   VI_WOO_PRODUCT_TABS_JS.'wpt-customize.js',
-    //   array( 'jquery','customize-preview' ),
-		//   VI_WOO_PRODUCT_TABS_VERSION,
-		//   true		
-	  // );
+    wp_enqueue_script( 
+		  'wpt-customize',
+		  VI_WOO_PRODUCT_TABS_JS.'wpt-customize.js',
+      array( 'jquery','customize-preview' ),
+		  VI_WOO_PRODUCT_TABS_VERSION,
+		  true		
+	  );
   }
 
   public function customize_controls_print_scripts() {

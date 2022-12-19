@@ -32,7 +32,7 @@ class VI_WOO_PRODUCT_TABS_DATA {
       'wpt_content_color' => '#fff',
       'wpt_content_background_color' => '#fff',
       'wpt_content_width' => 'full_width',
-      'wpt_product_tabs' => $this->get_core_tabs()
+      'wpt_product_tabs' => json_encode($this->get_core_tabs())
 		);
 
 		$this->params = apply_filters( 'woo_product_tabs_params', wp_parse_args( $product_tabs_settings, $this->default ) );
@@ -83,8 +83,8 @@ class VI_WOO_PRODUCT_TABS_DATA {
         'title'         => __( 'Additional Information', 'woocommerce-tab-manager' ),
         'description'   => __( 'Displays the product attributes and properties configured in the Product Data panel.', 'woocommerce-tab-manager' ),
         'heading'       => __( 'Additional Information', 'woocommerce-tab-manager' ),
-        'active'        => true,
-        'mobile_active' => true,
+        'active'        => false,
+        'mobile_active' => false,
         'icon'          => '',
         'display'       => 'inherit'
       ),
@@ -92,7 +92,7 @@ class VI_WOO_PRODUCT_TABS_DATA {
         'id'            => 'reviews',
         'position'      => 2,
         'type'          => 'core',
-        'title'         => __( 'Reviews', 'woocommerce-tab-manager' ),
+        'title'         => __( 'Reviews %d', 'woocommerce-tab-manager' ),
         'description'   => __( 'Displays the product review form and any reviews. Use %d in the Title to substitute the number of reviews for the product.', 'woocommerce-tab-manager' ),
         'active'        => true,
         'mobile_active' => true,

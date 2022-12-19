@@ -1,17 +1,5 @@
-const wptTabMainFunc = () => {
-  const app = window.wpt_tabs_customize
-
-  const publishChange = () => {
-    let save = document.getElementById('save')
-    let publish_settings = document.getElementById('publish-settings')
-
-    if (save && publish_settings) {
-      save.disabled = false
-      save.classList.add('has-next-sibling')
-
-      publish_settings.style.display = null
-    }
-  }
+var wptTabMainFunc = () => {
+  let app = window.wpt_tabs_customize
 
   // let list_tab_child = [
   //   {
@@ -24,30 +12,31 @@ const wptTabMainFunc = () => {
   //   }
   // ]
 
-  const parents = document.querySelectorAll('.wpt-customize-control-tabs')
+  let parents = document.querySelectorAll('.wpt-customize-control-tabs')
 
   parents.forEach(parent => {
     // variable
-    const wpt_tabs_value = parent.querySelector('.product-tabs-value')
+    let wpt_tabs_value = parent.querySelector('.product-tabs-value')
     
-    const wpt_list          = parent.querySelector('.wpt-list')
-    const wpt_btn_add       = parent.querySelector('.wpt-btn-add')
+    let wpt_list          = parent.querySelector('.wpt-list')
+    let wpt_btn_add       = parent.querySelector('.wpt-btn-add')
 
-    const wpt_modal_edit                   = parent.querySelector('.wpt-modal-edit')
-    const wpt_modal_tab_id                 = wpt_modal_edit.querySelector('.wpt-modal-tab-id')
-    const wpt_modal_checkbox_active        = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active')
-    const wpt_modal_checkbox_active_mobile = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active-mobile')
-    const wpt_modal_id                     = wpt_modal_edit.querySelector('.wpt-modal-id')
-    const wpt_modal_title                  = wpt_modal_edit.querySelector('.wpt-modal-title')
-    const wpt_modal_display                = wpt_modal_edit.querySelector('.wpt-modal-display')
-    const wpt_btn_close_modal_edit         = wpt_modal_edit.querySelector('.btn-del')
+    let wpt_modal_edit                   = parent.querySelector('.wpt-modal-edit')
+    let wpt_modal_tab_id                 = wpt_modal_edit.querySelector('.wpt-modal-tab-id')
+    let wpt_modal_checkbox_active        = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active')
+    let wpt_modal_checkbox_active_mobile = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active-mobile')
+    let wpt_modal_id                     = wpt_modal_edit.querySelector('.wpt-modal-id')
+    let wpt_modal_title                  = wpt_modal_edit.querySelector('.wpt-modal-title')
+    let wpt_modal_display                = wpt_modal_edit.querySelector('.wpt-modal-display')
+    let wpt_btn_close_modal_edit         = wpt_modal_edit.querySelector('.btn-del')
     
-    const wpt_modal_child_edit             = parent.querySelector('.wpt-modal-edit-child')
+    let wpt_modal_child_edit             = parent.querySelector('.wpt-modal-edit-child')
+
+    let event = new CustomEvent('change', {'detail': wpt_tabs_value})
 
     // TODO: default value
-    let list_tab_default = JSON.parse(app.data || '[]')
+    let list_tab_default = JSON.parse(wpt_tabs_value.value || '[]')
 
-    let changed = false
     let item_key = 0
     let list_tab = new Proxy({data: list_tab_default}, {
       set: function(target, prop, val, receiver) {
@@ -63,12 +52,9 @@ const wptTabMainFunc = () => {
         if (wpt_tabs_value) {
           wpt_tabs_value.value = JSON.stringify(new_data)
         }
-        // console.log(new_data)
+        console.log(new_data)
         
-        if (!changed) {
-          publishChange()
-          changed = true
-        }
+        wpt_tabs_value.dispatchEvent(event)
 
         return true;
       }
@@ -76,7 +62,7 @@ const wptTabMainFunc = () => {
     let item_key_child = 0
     let list_tab_child = []
 
-    // console.log(list_tab)
+    console.log(list_tab)
 
     // TODO: event to tab list
     // sortable
@@ -99,7 +85,7 @@ const wptTabMainFunc = () => {
         e.preventDefault()
         e.stopPropagation()
 
-        const item = document.createElement("li")
+        let item = document.createElement("li")
         item.innerHTML = `
           <div class="item">
             <div class="text">${app?.localize?.custom_tab || 'Custom tab'}</div>
@@ -132,7 +118,7 @@ const wptTabMainFunc = () => {
       })
     }
 
-    const addEventToItem = (item) => {
+    let addEventToItem = (item) => {
       let btn_del = item.querySelector('.icon-del')
       let btn_edit = item.querySelector('.icon-edit')
       let btn_active = item.querySelector('.form-check')
@@ -189,7 +175,7 @@ const wptTabMainFunc = () => {
       }
     }
 
-    const openModalEdit = (id) => (event) => {
+    let openModalEdit = (id) => (event) => {
       if (!wpt_modal_edit) return
 
       if (wpt_modal_tab_id) {
@@ -209,7 +195,7 @@ const wptTabMainFunc = () => {
       wpt_modal_child_edit.classList.add('hide')
     }
 
-    const addEventToModal = () => {
+    let addEventToModal = () => {
       // edit modal
       wpt_modal_checkbox_active.addEventListener('change', e => {
         let temp_item_tab_index = list_tab.data.findIndex(v => v.position == wpt_modal_tab_id.value)
@@ -263,10 +249,10 @@ const wptTabMainFunc = () => {
       let wpt_left_side = document.querySelector('#customize-controls')
       let wpt_resizeObserver = new ResizeObserver((entries) => {
         let temp_size = 300;
-        for (const entry of entries) {
+        for (let entry of entries) {
           if (entry.contentBoxSize) {
             // Firefox implements `contentBoxSize` as a single content rect, rather than an array
-            const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+            let contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
 
             temp_size = contentBoxSize.inlineSize
           } else {
@@ -281,7 +267,7 @@ const wptTabMainFunc = () => {
 
     // TODO: render dom list tab on load window
     list_tab.data.forEach(tab => {
-      const item = document.createElement("li")
+      let item = document.createElement("li")
       if (tab.id == 'description') {
         item.innerHTML = `
           <div class="item">
@@ -371,7 +357,7 @@ const wptTabMainFunc = () => {
         e.preventDefault()
         e.stopPropagation()
 
-        const item = document.createElement("li")
+        let item = document.createElement("li")
         item.innerHTML = `
           <div class="item">
             <div class="text"><?php echo __( 'Custom tab content', 'woo-product-tabs' ) ?> ${++list_tab_child_custom_key}</div>
@@ -403,7 +389,7 @@ const wptTabMainFunc = () => {
       })
     }
 
-    const addEventToItemChild = (item) => {
+    let addEventToItemChild = (item) => {
       let btn_del = item.querySelector('.icon-del')
       let btn_edit = item.querySelector('.icon-edit')
 
@@ -441,7 +427,7 @@ const wptTabMainFunc = () => {
       }
     }
 
-    const openModalChildEdit = (id) => (event) => {
+    let openModalChildEdit = (id) => (event) => {
       if (!wpt_modal_child_edit) return
 
       if (wpt_modal_tab_child_id) {
@@ -452,7 +438,7 @@ const wptTabMainFunc = () => {
       wpt_modal_child_edit.classList.remove('hide')
     }
 
-    const addEventToModalChild = () => {
+    let addEventToModalChild = () => {
       // close modal
       if (wpt_btn_close_modal_child_edit) {
         wpt_btn_close_modal_child_edit.addEventListener('click', e => {
@@ -463,7 +449,7 @@ const wptTabMainFunc = () => {
 
     // TODO: render dom list tab child on load window
     list_tab_child.forEach(v => {
-      const item = document.createElement("li")
+      let item = document.createElement("li")
 
       if (v.name == 'product') {
         item.innerHTML = `
@@ -516,7 +502,7 @@ const wptTabMainFunc = () => {
 
     // TODO: onload window
     // first add event and value on load window
-    const addEventOnLoad = () => {
+    let addEventOnLoad = () => {
       addEventToModal()
       addEventToModalChild()
 

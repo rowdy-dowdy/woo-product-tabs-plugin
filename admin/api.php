@@ -90,9 +90,15 @@ class VI_WOO_PRODUCT_TABS_Admin_Api {
 
   public function product_tabs() {
     try {
-      $tabs = get_theme_mod('wpt_product_tabs_params[wpt_product_tabs]');
+      $tabs = get_theme_mod('wpt_product_tabs_params');
 
-      return rest_ensure_response($tabs);
+      return rest_ensure_response([
+        "tab" => $tabs,
+        "tab2" => [
+          [ "id" => 1, "name" => "fsdf" ],
+          [ "id" => 2, "name" => "fsdf" ]
+        ]
+      ]);
 
     } catch (\Throwable $th) {
       return new WP_Error( 'error', __('Can\'t Not Found'), array( 'status' => 404 ) );

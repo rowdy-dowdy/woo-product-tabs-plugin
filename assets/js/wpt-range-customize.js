@@ -1,15 +1,17 @@
 window.addEventListener('load', _ => {
   jQuery(document).ready(function ($) {
     var wpt_range_field_customize = document.querySelectorAll('.wpt-custom-control-range')
-
+    
     wpt_range_field_customize.forEach(v => {
       let range = v.querySelector('.custom-input-range')
       let input = v.querySelector('.custom-input-text')
       let reset = v.querySelector('.reset')
 
+      let event = new CustomEvent('change', {'detail': range})
+      
       if (range) {
         range.addEventListener('change', (e) => {
-          if (input) {
+          if (input && !e.detail) {
             input.value = e.target.value
           }
         })
@@ -34,6 +36,8 @@ window.addEventListener('load', _ => {
               input.value = value
               range.value = value
             }
+
+            range.dispatchEvent(event)
           }
         })
       }
