@@ -95,6 +95,11 @@
   color: #0EA5E9;
 }
 
+.check input:disabled ~ * {
+  color: gray;
+  pointer-events: none;
+}
+
 /* icon */
 .wpt-customize-control-tabs .icon {
   display: inline-block;
@@ -215,7 +220,7 @@
   font-size: 20px;
 }
 
-.list-icon .icon.active {
+.list-icon .item-icon.active .icon {
   color: #0EA5E9;
 }
 
@@ -236,6 +241,15 @@
   color: #F43F5E;
 }
 
+.wpt-modal-roles {
+  box-shadow: 0 0 0 1px #a8a8a8;
+  border-radius: 5px;
+}
+.wpt-modal-roles.hide {
+  display: none;
+}
+
+/* modal eidt child */
 .modal-edit .editor {
   padding-top: 1.5rem;
 }
@@ -244,7 +258,7 @@
   max-width: 540px;
 }
 
-.wpt_modal_tab_child_content {
+.wpt-modal-tab-child-content {
   width: 100%;
 }
 

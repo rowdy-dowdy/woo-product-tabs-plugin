@@ -19,19 +19,6 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
     add_action( 'customize_controls_print_scripts', array($this, 'customize_controls_print_scripts') );
     add_action( 'customize_preview_init', array($this, 'customize_live_preview') );
     add_filter( 'script_loader_tag', array( $this, 'mind_defer_scripts'), 10, 3 );
-
-    function mytheme_customize_css()
-    {
-      ?>
-        <style type="text/css">
-          .viethung-test { color: <?php echo var_dump([
-            "a" => get_theme_mod('wpt_product_tabs_params', '#000000')['wpt_title_normal_font_size'],
-            "b" => get_theme_mod('wpt_product_tabs_params', '#000000')['wpt_product_tabs']
-          ]);?>; }
-        </style>
-      <?php
-    }
-    add_action( 'wp_head', 'mytheme_customize_css');
 	}
 
   public function design_option_customize($wp_customize) {

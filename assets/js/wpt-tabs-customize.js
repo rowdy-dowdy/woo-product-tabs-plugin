@@ -1,5 +1,6 @@
 var wptTabMainFunc = () => {
   let app = window.wpt_tabs_customize
+  let __ = wp.i18n.__
 
   // let list_tab_child = [
   //   {
@@ -27,6 +28,7 @@ var wptTabMainFunc = () => {
     let wpt_modal_checkbox_active_mobile = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active-mobile')
     let wpt_modal_id                     = wpt_modal_edit.querySelector('.wpt-modal-id')
     let wpt_modal_title                  = wpt_modal_edit.querySelector('.wpt-modal-title')
+    let wpt_modal_icons                  = wpt_modal_edit.querySelectorAll('.list-icon .item-icon')
     let wpt_modal_display                = wpt_modal_edit.querySelector('.wpt-modal-display')
     let wpt_btn_close_modal_edit         = wpt_modal_edit.querySelector('.btn-del')
     
@@ -38,43 +40,82 @@ var wptTabMainFunc = () => {
     let list_tab_default = JSON.parse(wpt_tabs_value.value || '[]')
 
     let item_key = 0
-    let list_tab = new Proxy({data: list_tab_default}, {
+    let list_tab = new Proxy({data: list_tab_default.sort((a,b) => a.position - b.position)}, {
       set: function(target, prop, val, receiver) {
         target[prop] = val
 
-        let new_data = val.map((v,i) => {
-          return {
-            ...v,
-            position:i
-          }
-        })
-
         if (wpt_tabs_value) {
-          wpt_tabs_value.value = JSON.stringify(new_data)
+          wpt_tabs_value.value = JSON.stringify(val)
+
+          console.log(val)
+          
+          wpt_tabs_value.dispatchEvent(event)
         }
-        console.log(new_data)
-        
-        wpt_tabs_value.dispatchEvent(event)
 
         return true;
       }
     })
     let item_key_child = 0
-    let list_tab_child = []
-
-    console.log(list_tab)
+    let list_tab_child = list_tab_default.find(v => v.id == 'description').children?.sort((a,b) => a.position - b.position) || []
 
     // TODO: event to tab list
+    let changePositionTab = async (array, o, n) => {
+      let data = array
+      return new Promise(res => {
+        if (o > n) {
+          // get position
+          let index_o = data.findIndex(v => v.position == o)
+          let index_data = []
+          for(let i = n; i < o; i++) {
+            let temp_i = data.findIndex(v => v.position == i)
+            index_data.push(temp_i)
+          }
+
+          // change position
+          if (index_o >= 0)
+            data[index_o].position = n
+
+          for(const e of index_data) {
+            data[e].position++
+          }
+        }
+        else if (o < n) {
+          // get position
+          let index_o = data.findIndex(v => v.position == o)
+          let index_data = []
+          for(let i = n + 1; i <= o; i++) {
+            let temp_i = data.findIndex(v => v.position == i)
+            index_data.push(temp_i)
+          }
+
+          // change position
+          if (index_o >= 0)
+            data[index_o].position = n
+
+          for(const e of index_data) {
+            data[e].position--
+          }
+        }
+
+        res(data)
+      })
+    }
+
     // sortable
     if (wpt_list) {
       let wpt_sortable = Sortable.create(wpt_list, {
         animation: 150,
         handle: '.handle',
         ghostClass: 'blue-bg-class',
-        onEnd: function (e) {
-          // console.log(e.oldIndex, e.newIndex);
-          [list_tab.data[e.oldIndex], list_tab.data[e.newIndex]] = [list_tab.data[e.newIndex], list_tab.data[e.oldIndex]]
-          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+        onEnd: async function (e) {
+          let o = e.oldIndex,
+              n = e.newIndex
+          
+          if (o == n) return
+
+          let data = await changePositionTab(list_tab.data, o, n)
+      
+          list_tab.data = data
         },
       });
     }
@@ -85,15 +126,17 @@ var wptTabMainFunc = () => {
         e.preventDefault()
         e.stopPropagation()
 
+        let id = 'custom-' + countCustomTab()
+
         let item = document.createElement("li")
         item.innerHTML = `
           <div class="item">
-            <div class="text">${app?.localize?.custom_tab || 'Custom tab'}</div>
+            <div class="text">${__('Custom tab', 'woo-product-tab')}</div>
             <div class="control">
-              <input type="checkbox" class="form-check" data-id="${item_key}">
+              <input type="checkbox" class="form-check" data-id="${id}">
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key}"><i class='bx bxs-edit' ></i></span>
-              <span class="icon icon-del" data-id="${item_key}"><i class='bx bx-x' ></i></span>
+              <span class="icon icon-edit" data-id="${id}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-del" data-id="${id}"><i class='bx bx-x' ></i></span>
             </div>
           </div>
         `
@@ -103,10 +146,10 @@ var wptTabMainFunc = () => {
         wpt_list.appendChild(item)
 
         list_tab.data.push({
-          id: 'custom',
+          id: id,
           position: item_key++,
           type: 'core',
-          title: app?.localize?.custom_tab || 'Custom tab',
+          title: __('Custom tab', 'woo-product-tab'),
           description: '',
           active: true,
           mobile_active: true,
@@ -117,6 +160,8 @@ var wptTabMainFunc = () => {
         list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
       })
     }
+
+    let countCustomTab = () => list_tab.data.filter(v => v.id.split("-")[0] == 'custom').length + 1
 
     let addEventToItem = (item) => {
       let btn_del = item.querySelector('.icon-del')
@@ -134,7 +179,7 @@ var wptTabMainFunc = () => {
 
             // delete data in list
             let id_temp = btn_del.dataset.id
-            let key_temp = list_tab.data.findIndex(v => v.position == id_temp)
+            let key_temp = list_tab.data.findIndex(v => v.id == id_temp)
             if (key_temp >= 0) {
               list_tab.data.splice(key_temp, 1)
               list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
@@ -161,7 +206,7 @@ var wptTabMainFunc = () => {
       if (btn_active) {
         let id_temp = btn_active.dataset.id
         btn_active.addEventListener('change', e => {
-          let temp_item_tab_index = list_tab.data.findIndex(v => v.position == id_temp)
+          let temp_item_tab_index = list_tab.data.findIndex(v => v.id == id_temp)
 
           if (temp_item_tab_index >= 0) {
             list_tab.data[temp_item_tab_index].active = e.currentTarget.checked
@@ -169,6 +214,10 @@ var wptTabMainFunc = () => {
 
             if (wpt_modal_tab_id.value == id_temp) {
               wpt_modal_checkbox_active.checked = e.currentTarget.checked
+
+              if (wpt_modal_checkbox_active_mobile) {
+                wpt_modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
+              }
             }
           }
         })
@@ -179,15 +228,25 @@ var wptTabMainFunc = () => {
       if (!wpt_modal_edit) return
 
       if (wpt_modal_tab_id) {
-        let temp_item_tab = list_tab.data.find(v => v.position == id)
+        let temp_item_tab = list_tab.data.find(v => v.id == id)
 
         if (!temp_item_tab) return
         
         wpt_modal_tab_id.value = id
         wpt_modal_checkbox_active.checked = temp_item_tab.active
-        wpt_modal_checkbox_active_mobile.checked = temp_item_tab.active_mobile
+        wpt_modal_checkbox_active_mobile.checked = temp_item_tab.mobile_active
+        wpt_modal_checkbox_active_mobile.disabled = !temp_item_tab.active
         wpt_modal_id.value = temp_item_tab.id
         wpt_modal_title.value = temp_item_tab.title
+
+        let none_icon_html = temp_item_tab.icon || `<i class="bx bx-block"></i>`
+        wpt_modal_icons.forEach(icon => {
+          icon.classList.remove('active')
+          if (none_icon_html == icon.firstChild.innerHTML.toString().trim()) {
+            icon.classList.add('active')
+          }
+        })
+
         wpt_modal_display.value = temp_item_tab.display
       }
 
@@ -198,7 +257,7 @@ var wptTabMainFunc = () => {
     let addEventToModal = () => {
       // edit modal
       wpt_modal_checkbox_active.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.position == wpt_modal_tab_id.value)
+        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
 
         if (temp_item_tab_index >= 0) {
           list_tab.data[temp_item_tab_index].active = e.currentTarget.checked
@@ -208,20 +267,24 @@ var wptTabMainFunc = () => {
           if (temp_tab_active) {
             temp_tab_active.checked = e.currentTarget.checked
           }
+
+          if (wpt_modal_checkbox_active_mobile) {
+            wpt_modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
+          }
         }
       })
 
       wpt_modal_checkbox_active_mobile.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.position == wpt_modal_tab_id.value)
+        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
 
         if (temp_item_tab_index >= 0) {
-          list_tab.data[temp_item_tab_index].active_mobile = e.currentTarget.checked
+          list_tab.data[temp_item_tab_index].mobile_active = e.currentTarget.checked
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         }
       })
 
-      wpt_modal_title.addEventListener('input', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.position == wpt_modal_tab_id.value)
+      wpt_modal_title.addEventListener('blur', e => {
+        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
 
         if (temp_item_tab_index >= 0) {
           list_tab.data[temp_item_tab_index].title = e.target.value
@@ -229,8 +292,27 @@ var wptTabMainFunc = () => {
         }
       })
 
+      wpt_modal_icons.forEach(icon => {
+        icon.addEventListener('click', e => {
+          let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+
+          if (temp_item_tab_index >= 0) {
+            wpt_modal_icons.forEach(v => {
+              v.classList.remove('active')
+            })
+
+            let icon_text = icon.firstChild.innerHTML.toString().trim()
+
+            list_tab.data[temp_item_tab_index].icon = icon_text == `<i class="bx bx-block"></i>` ? '' : icon_text
+            list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+
+            icon.classList.add('active')
+          }
+        })
+      })
+
       wpt_modal_display.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.position == wpt_modal_tab_id.value)
+        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
 
         if (temp_item_tab_index >= 0) {
           list_tab.data[temp_item_tab_index].display = e.currentTarget.value
@@ -271,26 +353,26 @@ var wptTabMainFunc = () => {
       if (tab.id == 'description') {
         item.innerHTML = `
           <div class="item">
-            <div class="text">${tab.title}</div>
+            <div class="text">${__('Description', 'woo-product-tab')}</div>
             <div class="control">
-              <input type="checkbox" class="form-check" data-id="${item_key}" ${tab.active ? 'checked': ''}>
+              <input type="checkbox" class="form-check" data-id="${tab.id}" ${tab.active ? 'checked': ''}>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-edit" data-id="${tab.id}"><i class='bx bxs-edit' ></i></span>
             </div>
           </div>
           <ul class="wpt-list-child list-child"></ul>
 
-          <div class="wpt-btn-add-child btn btn-custom">${app.localize.add_new || 'Add new'}</div>
+          <div class="wpt-btn-add-child btn btn-custom">${__('Add new', 'woo-product-tab')}</div>
         `
       }
       else if (tab.id == 'reviews') {
         item.innerHTML = `
           <div class="item">
-            <div class="text">${tab.title}</div>
+            <div class="text">${__('Reviews', 'woo-product-tab')}</div>
             <div class="control">
-              <input type="checkbox" class="form-check" data-id="${item_key}" ${tab.active ? 'checked': ''}>
+              <input type="checkbox" class="form-check" data-id="${tab.id}" ${tab.active ? 'checked': ''}>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-edit" data-id="${tab.id}"><i class='bx bxs-edit' ></i></span>
             </div>
           </div>
         `
@@ -298,24 +380,24 @@ var wptTabMainFunc = () => {
       else if (tab.id == 'additional_information') {
         item.innerHTML = `
           <div class="item">
-            <div class="text">${tab.title}</div>
+            <div class="text">${__('Additional Information', 'woo-product-tab')}</div>
             <div class="control">
-              <input type="checkbox" class="form-check" data-id="${item_key}" ${tab.active ? 'checked': ''}>
+              <input type="checkbox" class="form-check" data-id="${tab.id}" ${tab.active ? 'checked': ''}>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-edit" data-id="${tab.id}"><i class='bx bxs-edit' ></i></span>
             </div>
           </div>
         `
       }
-      else if (tab.id == 'custom') {
+      else {
         item.innerHTML = `
           <div class="item">
-            <div class="text">${app?.localize?.custom_tab || 'Custom tab'}</div>
+            <div class="text">${__('Custom tab', 'woo-product-tab')}</div>
             <div class="control">
-              <input type="checkbox" class="form-check" data-id="${item_key}" ${tab.active ? 'checked': ''}>
+              <input type="checkbox" class="form-check" data-id="${tab.id}" ${tab.active ? 'checked': ''}>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key}"><i class='bx bxs-edit' ></i></span>
-              <span class="icon icon-del" data-id="${item_key}"><i class='bx bx-x' ></i></span>
+              <span class="icon icon-edit" data-id="${tab.id}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-del" data-id="${tab.id}"><i class='bx bx-x' ></i></span>
             </div>
           </div>
         `
@@ -334,6 +416,7 @@ var wptTabMainFunc = () => {
     let wpt_btn_add_child = wpt_list.querySelector('.wpt-btn-add-child')
     let wpt_btn_close_modal_child_edit = wpt_modal_child_edit.querySelector('.btn-del')
     let wpt_modal_tab_child_id = wpt_modal_child_edit.querySelector('.wpt-modal-tab-child-id')
+    let wpt_btn_save_child_content = wpt_modal_child_edit.querySelector('.wpt-btn-save-child-content')
 
     // TODO: event to tab list child
     if (wpt_list_child) {
@@ -342,8 +425,18 @@ var wptTabMainFunc = () => {
         animation: 150,
         handle: '.handle',
         ghostClass: 'blue-bg-class',
-        onEnd: function (e) {
-          [list_tab_child[e.oldIndex], list_tab_child[e.newIndex]] = [list_tab_child[e.newIndex], list_tab_child[e.oldIndex]]
+        onEnd: async function (e) {
+          let o = e.oldIndex,
+              n = e.newIndex
+          
+          if (o == n) return
+
+          let data = await changePositionTab(list_tab_child, o, n)
+      
+          list_tab_child = data
+          
+          list_tab.data.find(v => v.id == 'description').children = list_tab_child
+          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         },
         // fallbackOnBody: true,
         // swapThreshold: 0.65
@@ -358,22 +451,25 @@ var wptTabMainFunc = () => {
         e.stopPropagation()
 
         let item = document.createElement("li")
+
+        let id = 'custom-' + countCustomTabChild()
+
         item.innerHTML = `
           <div class="item">
-            <div class="text"><?php echo __( 'Custom tab content', 'woo-product-tabs' ) ?> ${++list_tab_child_custom_key}</div>
+            <div class="text">${__( 'Custom tab content', 'woo-product-tabs' )}</div>
             <div class="control">
               <div class="check">
-                <input class="checkbox-child-${item_key_child} sr-only" type="checkbox">
-                <label for="checkbox_child_${item_key_child}" class="icon icon-show">
+                <input id="checkbox_child_${id}" class="icon-check sr-only" data-id="${id}" type="checkbox">
+                <label for="checkbox_child_${id}" class="icon icon-show">
                   <i class='bx bx-show' ></i>
                 </label>
-                <label for="checkbox_child_${item_key_child}" class="icon icon-vision">
+                <label for="checkbox_child_${id}" class="icon icon-vision">
                   <i class='bx bx-low-vision' ></i>
                 </label>
               </div>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key_child}"><i class='bx bxs-edit' ></i></span>
-              <span class="icon icon-del" data-id="${item_key_child}"><i class='bx bx-x' ></i></span>
+              <span class="icon icon-edit" data-id="${id}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-del" data-id="${id}"><i class='bx bx-x' ></i></span>
             </div>
           </div>
         `
@@ -383,15 +479,24 @@ var wptTabMainFunc = () => {
         wpt_list_child.appendChild(item)
 
         list_tab_child.push({
-          name: 'custom',
-          key: item_key_child++
+          id: id,
+          position: item_key_child++,
+          title: __( 'Custom tab content', 'woo-product-tabs' ),
+          active: true,
+          content: ''
         })
+
+        list_tab.data.find(v => v.id == 'description').children = list_tab_child
+        list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
       })
     }
+
+    let countCustomTabChild = () => list_tab_child.filter(v => v.id.split("-")[0] == 'custom').length + 1
 
     let addEventToItemChild = (item) => {
       let btn_del = item.querySelector('.icon-del')
       let btn_edit = item.querySelector('.icon-edit')
+      let btn_check = item.querySelector('.icon-check')
 
       // delete item
       if (btn_del) {
@@ -401,12 +506,14 @@ var wptTabMainFunc = () => {
 
           let parent = btn_del.closest('li')
           if (parent) {
-
             // delete data in list
             let id_temp = btn_del.dataset.id
-            let key_temp = list_tab_child.findIndex(v => v.position == id_temp)
+            let key_temp = list_tab_child.findIndex(v => v.id == id_temp)
             if (key_temp >= 0) {
               list_tab_child.splice(key_temp, 1)
+
+              list_tab.data.find(v => v.id == 'description').children = list_tab_child
+              list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
             }
 
             // delete element
@@ -425,13 +532,31 @@ var wptTabMainFunc = () => {
         let id_temp = btn_edit.dataset.id
         btn_edit.addEventListener('click', openModalChildEdit(id_temp))
       }
+
+      // check
+      if (btn_check) {
+        let id_temp = btn_check.dataset.id
+
+        btn_check.addEventListener('change', (e) => {
+          let key_temp = list_tab_child.findIndex(v => v.id == id_temp)
+          if (key_temp >= 0) {
+            list_tab_child[key_temp].active = e.currentTarget.checked
+  
+            list_tab.data.find(v => v.id == 'description').children = list_tab_child
+            list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+          }
+        })
+      }
     }
 
     let openModalChildEdit = (id) => (event) => {
       if (!wpt_modal_child_edit) return
 
-      if (wpt_modal_tab_child_id) {
+      if (wpt_modal_tab_child_id && wpt_modal_tab_child_id.value != id) {
         wpt_modal_tab_child_id.value = id
+
+        let index_tab_child = list_tab_child.findIndex(v => v.id == id)
+        tinymce.get("wpt_modal_tab_child_content").setContent(list_tab_child[index_tab_child].content)
       }
 
       wpt_modal_edit.classList.add('hide')
@@ -439,6 +564,19 @@ var wptTabMainFunc = () => {
     }
 
     let addEventToModalChild = () => {
+      if (wpt_btn_save_child_content) {
+        wpt_btn_save_child_content.addEventListener('click', _ => {
+          let index_tab_child = list_tab_child.findIndex(v => v.id == wpt_modal_tab_child_id.value)
+
+          if (index_tab_child >= 0) {
+            list_tab_child[index_tab_child].content = tinymce.get("wpt_modal_tab_child_content").getContent()
+
+            list_tab.data.find(v => v.id == 'description').children = list_tab_child
+            list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+          }
+        })
+      }
+
       // close modal
       if (wpt_btn_close_modal_child_edit) {
         wpt_btn_close_modal_child_edit.addEventListener('click', e => {
@@ -451,43 +589,42 @@ var wptTabMainFunc = () => {
     list_tab_child.forEach(v => {
       let item = document.createElement("li")
 
-      if (v.name == 'product') {
+      if (v.id == 'product_description') {
         item.innerHTML = `
           <div class="item">
-            <div class="text"><?php echo __( 'Product description', 'woo-product-tabs' ) ?></div>
+            <div class="text">${v.title}</div>
             <div class="control">
               <div class="check">
-                <input class="checkbox-child-${item_key_child} sr-only" type="checkbox" ${v.active ? 'checked' : ''}>
-                <label for="checkbox_child_${item_key_child}" class="icon icon-show">
+                <input id="checkbox_child_${v.id}" class="icon-check sr-only" data-id="${v.id}" type="checkbox" ${v.active ? 'checked' : ''}>
+                <label for="checkbox_child_${v.id}" class="icon icon-show">
                   <i class='bx bx-show' ></i>
                 </label>
-                <label for="checkbox_child_${item_key_child}" class="icon icon-vision">
+                <label for="checkbox_child_${v.id}" class="icon icon-vision">
                   <i class='bx bx-low-vision' ></i>
                 </label>
               </div>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key_child}"><i class='bx bxs-edit' ></i></span>
             </div>
           </div>
         `
       }
-      else if (v.name == 'custom') {
+      else {
         item.innerHTML = `
           <div class="item">
-            <div class="text"><?php echo __( 'Custom tab content', 'woo-product-tabs' ) ?> ${++list_tab_child_custom_key}</div>
+            <div class="text">${v.title}</div>
             <div class="control">
               <div class="check">
-                <input class="checkbox-child-${item_key_child} sr-only" type="checkbox" ${v.active ? 'checked' : ''}>
-                <label for="checkbox_child_${item_key_child}" class="icon icon-show">
+                <input id="checkbox_child_${v.id}" class="icon-check sr-only" data-id="${v.id}" type="checkbox" ${v.active ? 'checked' : ''}>
+                <label for="checkbox_child_${v.id}" class="icon icon-show">
                   <i class='bx bx-show' ></i>
                 </label>
-                <label for="checkbox_child_${item_key_child}" class="icon icon-vision">
+                <label for="checkbox_child_${v.id}" class="icon icon-vision">
                   <i class='bx bx-low-vision' ></i>
                 </label>
               </div>
               <span class="icon icon-move handle"><i class='bx bx-move' ></i></span>
-              <span class="icon icon-edit" data-id="${item_key_child}"><i class='bx bxs-edit' ></i></span>
-              <span class="icon icon-del" data-id="${item_key_child}"><i class='bx bx-x' ></i></span>
+              <span class="icon icon-edit" data-id="${v.id}"><i class='bx bxs-edit' ></i></span>
+              <span class="icon icon-del" data-id="${v.id}"><i class='bx bx-x' ></i></span>
             </div>
           </div>
         `
@@ -522,8 +659,6 @@ var wptTabMainFunc = () => {
   })
 }
 
-window.addEventListener('load', _ => {
-  jQuery(document).ready(function ($) {
-    wptTabMainFunc()
-  })
+jQuery(document).ready(function ($) {
+  wptTabMainFunc()
 })

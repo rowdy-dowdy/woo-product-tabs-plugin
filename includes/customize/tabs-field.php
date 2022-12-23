@@ -25,7 +25,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
     // wp_enqueue_script( 'wpt-alpinejs', VI_WOO_PRODUCT_TABS_JS.'alpinejs.3.10.5.min.js');
     // wp_enqueue_script( 'wpt-immerjs', VI_WOO_PRODUCT_TABS_JS.'immer.min.js');
 
-    wp_enqueue_script( 'wpt-tabs-customize', VI_WOO_PRODUCT_TABS_JS.'wpt-tabs-customize.js', array('wpt-sortable'));
+    wp_enqueue_script( 'wpt-tabs-customize', VI_WOO_PRODUCT_TABS_JS.'wpt-tabs-customize.js', array('wpt-sortable','wp-i18n'));
     wp_localize_script('wpt-tabs-customize', 'wpt_tabs_customize', [
       'data' => $this->value(),
       'localize' => [
@@ -70,68 +70,148 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
           <div class="content">
             <input type="hidden" class="wpt-modal-tab-id" name="wpt_modal_tab_id">
             <table>
-              <tr>
-                <td><?php echo __( 'Active', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <div class="check">
-                    <input class="wpt-modal-checkbox-active sr-only" id="wpt_modal_checkbox_active<?php echo $this->id ?>" type="checkbox">
-                    <label for="wpt_modal_checkbox_active<?php echo $this->id ?>" class="icon icon-show">
-                      <i class='bx bx-checkbox-square' ></i>
-                    </label>
-                    <label for="wpt_modal_checkbox_active<?php echo $this->id ?>" class="icon icon-vision">
-                      <i class='bx bx-checkbox' ></i>
-                    </label>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><?php echo __( 'Active on mobile', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <div class="check">
-                    <input class="wpt-modal-checkbox-active-mobile sr-only" id="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" type="checkbox">
-                    <label for="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" class="icon icon-show">
-                      <i class='bx bx-checkbox-square' ></i>
-                    </label>
-                    <label for="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" class="icon icon-vision">
-                      <i class='bx bx-checkbox' ></i>
-                    </label>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><?php echo __( 'ID', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <input type="text" name="wpt_modal_id" class="wpt-modal-id custom" disabled>
-                </td>
-              </tr>
-              <tr>
-                <td><?php echo __( 'Title', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <input type="text" name="wpt_modal_title" class="wpt-modal-title custom">
-                </td>
-              </tr>
-              <tr>
-                <td><?php echo __( 'Icon', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <div class="list-icon">
-                    <span class="item-icon"><span class="icon"><i class='bx bxs-copy-alt' ></i></span></span>
-                    <span class="item-icon"><span class="icon"><i class='bx bxs-copy-alt' ></i></span></span>
-                    <span class="item-icon"><span class="icon"><i class='bx bxs-copy-alt' ></i></span></span>
-                    <span class="item-icon"><span class="icon"><i class='bx bxs-copy-alt' ></i></span></span>
-                    <span class="item-icon"><span class="icon"><i class='bx bxs-copy-alt' ></i></span></span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><?php echo __( 'Display conditions', 'woo-product-tabs' ) ?></td>
-                <td>
-                  <select name="wpt_modal_display" class="wpt-modal-display custom">
-                    <option value="inherit" selected><?php echo __( 'Inherit', 'woo-product-tabs' ) ?></option>
-                    <option value="always_show"><?php echo __( 'Always show', 'woo-product-tabs' ) ?></option>
-                    <option value="rules"><?php echo __( 'Rules', 'woo-product-tabs' ) ?></option>
-                  </select>
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td><?php echo __( 'Active', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div class="check">
+                      <input class="wpt-modal-checkbox-active sr-only" id="wpt_modal_checkbox_active<?php echo $this->id ?>" type="checkbox">
+                      <label for="wpt_modal_checkbox_active<?php echo $this->id ?>" class="icon icon-show">
+                        <i class='bx bx-checkbox-square' ></i>
+                      </label>
+                      <label for="wpt_modal_checkbox_active<?php echo $this->id ?>" class="icon icon-vision">
+                        <i class='bx bx-checkbox' ></i>
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Active on mobile', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div class="check">
+                      <input class="wpt-modal-checkbox-active-mobile sr-only" id="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" type="checkbox">
+                      <label for="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" class="icon icon-show">
+                        <i class='bx bx-checkbox-square' ></i>
+                      </label>
+                      <label for="wpt_modal_checkbox_active_mobile<?php echo $this->id ?>" class="icon icon-vision">
+                        <i class='bx bx-checkbox' ></i>
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'ID', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <input type="text" name="wpt_modal_id" class="wpt-modal-id custom" disabled>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Title', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <input type="text" name="wpt_modal_title" class="wpt-modal-title custom">
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Icon', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div class="list-icon">
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-block' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-detail'></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-detail' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-message-square-dots' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-message-square-dots' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-info-circle' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-info-circle' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-purchase-tag' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-purchase-tag' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-map'></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-map' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bx-share-alt' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-share-alt' ></i>
+                      </span></span>
+                      <span class="item-icon"><span class="icon">
+                        <i class='bx bxs-shapes' ></i>
+                      </span></span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Display conditions', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                      <option value="inherit" selected><?php echo __( 'Inherit', 'woo-product-tabs' ) ?></option>
+                      <option value="always_show"><?php echo __( 'Always show', 'woo-product-tabs' ) ?></option>
+                      <option value="rules"><?php echo __( 'Rules', 'woo-product-tabs' ) ?></option>
+                    </select>
+                  </td>
+                </tr>
+                <tr style="height: 1rem;"></tr>
+              </tbody>
+
+              <tbody class="wpt-modal-roles">
+                <tr><td colspan="2"><b><?php echo __('Rules') ?></b></td></tr>
+                <tr>
+                  <td><?php echo __( 'Product description', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                      <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
+                      <option value="empty"><?php echo __( 'Empty', 'woo-product-tabs' ) ?></option>
+                      <option value="not_empty"><?php echo __( 'Not empty', 'woo-product-tabs' ) ?></option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Product short description', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                      <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
+                      <option value="empty"><?php echo __( 'Empty', 'woo-product-tabs' ) ?></option>
+                      <option value="not_empty"><?php echo __( 'Not empty', 'woo-product-tabs' ) ?></option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Product type in (empty is all)', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <input type="text" class="product_type sr-only">
+                    <div class="relative">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span>
+                      </div>
+                      <div class="input-modal">
+                        <input type="text" class="input-seach">
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             </table>
 
             <div class="btn btn-del"><i class='bx bx-x' ></i></div>
@@ -143,7 +223,8 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
           <div class="content">
             <input type="hidden" class="wpt-modal-tab-child-id" name="wpt_modal_tab_child_id">
             <div class="editor">
-              <textarea name="wpt_modal_tab_child_content" class="wpt-modal-tab-child-content"></textarea>
+              <textarea id="wpt_modal_tab_child_content" name="wpt_modal_tab_child_content" class="wpt-modal-tab-child-content"></textarea>
+              <div class="wpt-btn-save-child-content btn btn-custom">Save</div>
             </div>
             <div class="btn btn-del"><i class='bx bx-x' ></i></div>
           </div>
