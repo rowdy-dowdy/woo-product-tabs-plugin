@@ -33,7 +33,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
         'add_new' => __( 'Add new', 'woo-product-tabs' ),
         'nonce' => wp_create_nonce('wp_rest'),
         'customizeURL' => wp_customize_url(),
-      ]
+      ],
+      'consumer_key'    => get_option('wpt_settings_consumer_key'),
+      'consumer_secret' => get_option('wpt_settings_consumer_secret')
     ]);
 	}
 
@@ -73,7 +75,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
               <tbody>
                 <tr>
                   <td><?php echo __( 'Active', 'woo-product-tabs' ) ?></td>
-                  <td>
+                  <td style="width: 232px;">
                     <div class="check">
                       <input class="wpt-modal-checkbox-active sr-only" id="wpt_modal_checkbox_active<?php echo $this->id ?>" type="checkbox">
                       <label for="wpt_modal_checkbox_active<?php echo $this->id ?>" class="icon icon-show">
@@ -173,7 +175,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                 <tr style="height: 1rem;"></tr>
               </tbody>
 
-              <tbody class="wpt-modal-roles">
+              <tbody class="wpt-modal-roles hide">
                 <tr><td colspan="2"><b><?php echo __('Rules') ?></b></td></tr>
                 <tr>
                   <td><?php echo __( 'Product description', 'woo-product-tabs' ) ?></td>
@@ -198,14 +200,186 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                 <tr>
                   <td><?php echo __( 'Product type in (empty is all)', 'woo-product-tabs' ) ?></td>
                   <td>
-                    <input type="text" class="product_type sr-only">
-                    <div class="relative">
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/')?>"
+                      data-title_key="name"
+                      data-role_key="product_type_in"
+                    >
+                      <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
                         <div class="list-add"></div>
-                        <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
                       </div>
-                      <div class="input-modal">
-                        <input type="text" class="input-seach">
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Is vitural', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                      <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
+                      <option value="yes"><?php echo __( 'Yes', 'woo-product-tabs' ) ?></option>
+                      <option value="no"><?php echo __( 'No', 'woo-product-tabs' ) ?></option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Is on sale', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                      <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
+                      <option value="yes"><?php echo __( 'Yes', 'woo-product-tabs' ) ?></option>
+                      <option value="no"><?php echo __( 'No', 'woo-product-tabs' ) ?></option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Stock in status', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/')?>"
+                      data-title_key="name"
+                      data-role_key="stock_in_status"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Product in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products')?>"
+                      data-title_key="name"
+                      data-role_key="product_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Product not in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products')?>"
+                      data-title_key="name"
+                      data-role_key="product_not_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Category in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/categories')?>"
+                      data-title_key="name"
+                      data-role_key="category_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Category not in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/categories')?>"
+                      data-title_key="name"
+                      data-role_key="category_not_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Tag in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tag')?>"
+                      data-title_key="name"
+                      data-role_key="tag_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
+                        <div class="search-list"></div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo __( 'Tag not in', 'woo-product-tabs' ) ?></td>
+                  <td>
+                    <div 
+                      class="wpt-input-api" 
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tag')?>"
+                      data-title_key="name"
+                      data-role_key="tag_not_in"
+                    >
+                      <input type="text" class="input-value sr-only">
+                      <div class="input-quick-add">
+                        <div class="list-add"></div>
+                        <!-- <span class="icon-toggle"><i class='bx bx-chevron-down' ></i></span> -->
+                      </div>
+                      <div class="input-modal hide">
+                        <!-- <input type="text" class="input-seach"> -->
                         <div class="search-list"></div>
                       </div>
                     </div>

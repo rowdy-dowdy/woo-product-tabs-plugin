@@ -2,17 +2,7 @@ var wptTabMainFunc = () => {
   let app = window.wpt_tabs_customize
   let __ = wp.i18n.__
 
-  // let list_tab_child = [
-  //   {
-  //     name: 'custom',
-  //     active: true
-  //   },
-  //   {
-  //     name: 'product',
-  //     active: true
-  //   }
-  // ]
-
+  // ! control tab
   let parents = document.querySelectorAll('.wpt-customize-control-tabs')
 
   parents.forEach(parent => {
@@ -31,6 +21,9 @@ var wptTabMainFunc = () => {
     let wpt_modal_icons                  = wpt_modal_edit.querySelectorAll('.list-icon .item-icon')
     let wpt_modal_display                = wpt_modal_edit.querySelector('.wpt-modal-display')
     let wpt_btn_close_modal_edit         = wpt_modal_edit.querySelector('.btn-del')
+
+    let wpt_modal_roles                  = wpt_modal_edit.querySelector('.wpt-modal-roles')
+    let wpt_input_apis                   = wpt_modal_edit.querySelectorAll('.wpt-input-api')
     
     let wpt_modal_child_edit             = parent.querySelector('.wpt-modal-edit-child')
 
@@ -248,6 +241,37 @@ var wptTabMainFunc = () => {
         })
 
         wpt_modal_display.value = temp_item_tab.display
+
+        if (temp_item_tab.display == "rules") {
+          if (wpt_modal_roles)
+            wpt_modal_roles.classList.remove('hide')
+        }
+        else {
+          if (wpt_modal_roles)
+            wpt_modal_roles.classList.add('hide')
+        }
+
+        wpt_input_apis.forEach(v => {
+          let url       = v.dataset.url
+          let title_key = v.dataset.title_key
+          let role_key  = v.dataset.role_key
+
+          let input_quick_add = v.querySelector('.input-quick-add')
+          let list_add        = v.querySelector('.list-add')
+
+          let input_modal = v.querySelector('.input-modal')
+          let search_list = v.querySelector('.search-list')
+
+          let role = temp_item_tab.role || {}
+          let list_item = role[role_key] || []
+
+          if (list_item.length == 0) {
+            search_list.innerHTML = __('Chưa chọn', 'woo-product-tab')
+          }
+          else {
+            console.log(list_item)
+          }
+        })
       }
 
       wpt_modal_edit.classList.remove('hide')
@@ -315,6 +339,15 @@ var wptTabMainFunc = () => {
         let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
 
         if (temp_item_tab_index >= 0) {
+          if (e.currentTarget.value == "rules") {
+            if (wpt_modal_roles)
+              wpt_modal_roles.classList.remove('hide')
+          }
+          else {
+            if (wpt_modal_roles)
+              wpt_modal_roles.classList.add('hide')
+          }
+
           list_tab.data[temp_item_tab_index].display = e.currentTarget.value
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         }
@@ -327,24 +360,110 @@ var wptTabMainFunc = () => {
         })
       }
 
-      //resize modal
-      let wpt_left_side = document.querySelector('#customize-controls')
-      let wpt_resizeObserver = new ResizeObserver((entries) => {
-        let temp_size = 300;
-        for (let entry of entries) {
-          if (entry.contentBoxSize) {
-            // Firefox implements `contentBoxSize` as a single content rect, rather than an array
-            let contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+      wpt_input_apis.forEach(item => {
+        addEventInputApi(item)
+      })
+    }
 
-            temp_size = contentBoxSize.inlineSize
-          } else {
-            temp_size = entry.contentRect.width
-          }
+    // ! input api
+    let input_window_outside = null
+
+    let clickOutSide = (el, input_modal) => (event) => {
+      const withinBoundaries = event.composedPath().includes(el)
+    
+      if (!withinBoundaries) {
+        input_modal.classList.add('hide')
+        document.removeEventListener('click', input_window_outside, true)
+      }
+    }
+
+    let fetchData = (url, consumer_key, consumer_secret) => {
+      return new Promise(async res => {
+        await fetch(`${url}?consumer_key=${consumer_key}&consumer_secret=${consumer_secret}`)
+        .then(res => res.json())
+        .then(data => res(data))
+        .catch(error => res([]))
+      })
+    }
+    
+    let addEventInputApi = (el) => {
+      let url       = el.dataset.url
+      let title_key = el.dataset.title_key
+      let role_key  = el.dataset.role_key
+    
+      let input_quick_add = el.querySelector('.input-quick-add')
+      let list_add        = el.querySelector('.list-add')
+
+      let input_modal = el.querySelector('.input-modal')
+      let search_list = el.querySelector('.search-list')
+    
+      input_quick_add.addEventListener('click', async e => {
+        e.stopPropagation()
+        if (!input_modal.classList.contains('hide')) return
+    
+        input_modal.classList.remove('hide')
+        if(el.getBoundingClientRect().bottom + input_modal.offsetHeight > document.documentElement.scrollHeight) {
+          input_modal.classList.add('top')
+        }
+        else {
+          input_modal.classList.remove('top')
         }
 
-        wpt_modal_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
-        wpt_modal_child_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
-      }).observe(wpt_left_side)
+        input_window_outside = clickOutSide(el, input_modal)
+    
+        document.addEventListener('click', input_window_outside, true)
+
+        //* fetch data
+        search_list.classList.add('loading')
+        let data = await fetchData(url, app.consumer_key, app.consumer_secret)
+        search_list.classList.remove('loading')
+
+        let text_childs = ''
+
+        data.forEach(v => {
+          text_childs += `
+            <div class="list-item" data-id="${v?.id || 0}">${v[title_key] || ''}</div>
+          `
+        })
+
+        let item = document.createElement("div")
+        item.innerHTML = text_childs
+
+        let childs = item.querySelectorAll('.list-item')
+
+        childs.forEach(v => {
+          v.addEventListener('click', e => {
+            let value = data.find(i => i.id == v.dataset.id)
+            let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+
+            if (temp_item_tab_index >= 0) {
+              let role = list_tab.data[temp_item_tab_index].role || {}
+
+              if (!(role[role_key] || []).includes(value.id)) {
+                let new_list_in_row = (role[role_key] || [])
+                new_list_in_row.push(value.id)
+
+                role = {
+                  ...role,
+                  [role_key]: new_list_in_row
+                }
+
+                list_tab.data[temp_item_tab_index].role = role
+                list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+  
+                let list_item = document.createElement("div")
+                list_item.classList.add('list-item')
+                list_item.innerText = value.name
+      
+                list_add.appendChild(list_item)
+              }
+            }
+          })
+        })
+
+        search_list.innerHTML = ''
+        search_list.appendChild(item)
+      })
     }
 
     // TODO: render dom list tab on load window
@@ -653,6 +772,25 @@ var wptTabMainFunc = () => {
         quicktags: {},
         mediaButtons: true,
       })
+
+      //resize modal
+      let wpt_left_side = document.querySelector('#customize-controls')
+      let wpt_resizeObserver = new ResizeObserver((entries) => {
+        let temp_size = 300;
+        for (let entry of entries) {
+          if (entry.contentBoxSize) {
+            // Firefox implements `contentBoxSize` as a single content rect, rather than an array
+            let contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+
+            temp_size = contentBoxSize.inlineSize
+          } else {
+            temp_size = entry.contentRect.width
+          }
+        }
+
+        wpt_modal_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
+        wpt_modal_child_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
+      }).observe(wpt_left_side)
     }
 
     addEventOnLoad()
