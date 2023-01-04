@@ -51,6 +51,7 @@ window.addEventListener('load', _ => {
 
               if (input) {
                 input.value = default_value
+                range.dispatchEvent(event)
               }
             }
           }

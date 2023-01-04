@@ -4,6 +4,7 @@ import { saveSettings } from '../store/settings'
 import { redirect } from "react-router-dom";
 import { AppLocalizeContext } from "../App";
 import Loading from "../components/loading";
+import { NavLink } from "react-router-dom";
 
 export default () => {
   const appLocalizer = useContext(AppLocalizeContext)
@@ -12,7 +13,10 @@ export default () => {
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [products, setProducts] = useState([])
+
+  const __ = wp.i18n.__
 
   useEffect(() => {
     const load = async () => {
@@ -29,15 +33,19 @@ export default () => {
 
             temp_settings = data.data
           })
-          .catch(e => redirect('/settings'))
+          .catch(e => redirect('/started'))
       }
 
       await fetch(`${appLocalizer.apiURL}/wc/v3/products?consumer_key=${temp_settings.consumer_key}&consumer_secret=${temp_settings.consumer_secret}`)
-        .then(res => res.json())
-        .then(data => {
+        .then(res => {
+          if(res.status !== 200)
+          {
+            throw new Error(response.status)
+          }
+          const data = res.json()
           setProducts(data)
         })
-        .catch(e => console.log(e))
+        .catch(e => setError(true))
 
       setLoading(false)
     }
@@ -47,10 +55,21 @@ export default () => {
 
   return(
     <div className="w-full max-w-4xl mx-auto">
-      <h1 className="!text-xl font-semibold py-4">Let's get you started 🚀</h1>
+      <h1 className="!text-xl font-semibold py-4">{__('Welcome to Woocommerce product tab 🚀' ,'woo-product-tab')}</h1>
       <div className="mt-4">
         { loading 
         ? <Loading />
+        : error
+        ? <div className="relative">
+            <div className="w-full bg-white rounded shadow p-4 space-y-4">
+              <h1 className="font-semibold">{__('An error occurred' ,'woo-product-tab')}</h1>
+              <p>
+                - {__('Maybe the rest api key you created is not correct, please try upadte Consumer key at' ,'woo-product-tab')}{" "}
+                <NavLink to="/settings" className="text-blue-600">{__('Settings' ,'woo-product-tab')}</NavLink>
+              </p>
+              <p>- {__('If not, please check your link is https' ,'woo-product-tab')}{" "}</p>
+            </div>
+        </div>
         : <div className="relative">
             <div className="w-full bg-white rounded shadow p-4 space-y-4">
               { products.length > 0 
@@ -60,16 +79,16 @@ export default () => {
                     className="inline-block px-8 py-4 bg-rose-600 hover:bg-rose-500 shadow rounded text-white text-base font-semibold"
                     target="_blank"
                   >
-                    Go to Customize setting
+                    {__('Go to Customize setting' ,'woo-product-tab')}
                   </a>
 
                   <table className="mt-6 w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                       <tr>
-                        <th scope="col" className="py-3 px-6">Image</th>
-                        <th scope="col" className="py-3 px-6">Name</th>
-                        <th scope="col" className="py-3 px-6">Price</th>
-                        <th scope="col" className="py-3 px-6 text-center">Action</th>
+                        <th scope="col" className="py-3 px-6">{__('Image' ,'woo-product-tab')}</th>
+                        <th scope="col" className="py-3 px-6">{__('Name' ,'woo-product-tab')}</th>
+                        <th scope="col" className="py-3 px-6">{__('Price' ,'woo-product-tab')}</th>
+                        <th scope="col" className="py-3 px-6 text-center">{__('Action' ,'woo-product-tab')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -87,7 +106,7 @@ export default () => {
                                 target="_blank"
                                 className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-400 text-white font-semibold"
                               >
-                                Customize
+                                {__('Customize' ,'woo-product-tab')}
                               </a>
                             </td>
                           </tr>
@@ -96,7 +115,7 @@ export default () => {
                     </tbody>
                   </table>
                 </div>
-              : <div className="text-xl">Can't find any products</div>
+              : <div className="text-xl">{__('Can\'t find any products' ,'woo-product-tab')}</div>
               }
             </div>
           </div>

@@ -6,9 +6,44 @@
   display: none !important;
 }
 
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: initial;
+  vertical-align: initial;
+}
+
 #wpcontent {
   min-height: calc(100vh - 32px);
   @apply bg-gray-200;
+}
+
+#wpcontent .started-slide .swiper-pagination {
+  @apply flex justify-center space-x-4 mt-4;
+}
+
+#wpcontent .started-slide .swiper-pagination .swiper-pagination-bullet {
+  @apply w-10 h-10 rounded-full bg-white text-blue-600 border-2 border-blue-600 p-1 text-center text-base font-semibold cursor-pointer;
+}
+#wpcontent .started-slide .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  @apply bg-blue-600 text-white;
+}
+
+#wpcontent .started-slide .swiper-button-prev,
+#wpcontent .started-slide .swiper-button-next {
+  @apply w-10 h-10 rounded-full bg-blue-600 text-white after:text-base after:font-semibold text-center transition-all duration-300;
+}
+
+#wpcontent .started-slide .swiper-button-prev {
+  @apply after:content-['prev'] -left-10 right-auto;
+}
+#wpcontent .started-slide .swiper-button-next {
+  @apply after:content-['next'] left-auto -right-10;
+}
+
+#wpcontent .started-slide:hover .swiper-button-prev {
+  @apply left-2.5;
+}
+#wpcontent .started-slide:hover .swiper-button-next {
+  @apply right-2.5;
 }
 
 @layer components {

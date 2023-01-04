@@ -31,6 +31,18 @@ class VI_WOO_PRODUCT_TABS_Admin_Api {
       'callback' => [$this, 'product_tabs'],
       // 'permission_callback' => [$this, 'save_settings_permission']
     ]);
+
+    register_rest_route('wpt/v1', '/product/types', [
+      'methods' => 'GET',
+      'callback' => [$this, 'product_types'],
+      // 'permission_callback' => [$this, 'save_settings_permission']
+    ]);
+
+    register_rest_route('wpt/v1', '/product/stocks', [
+      'methods' => 'GET',
+      'callback' => [$this, 'product_stocks'],
+      // 'permission_callback' => [$this, 'save_settings_permission']
+    ]);
 	}
 
   public function get_settings() {
@@ -103,5 +115,47 @@ class VI_WOO_PRODUCT_TABS_Admin_Api {
     } catch (\Throwable $th) {
       return new WP_Error( 'error', __('Can\'t Not Found'), array( 'status' => 404 ) );
     }
+  }
+
+  public function product_types() {
+    $response = array(
+      array(
+        "id" => "simple",
+        "name" => "Simple product"
+      ),
+      array(
+        "id" => "grouped",
+        "name" => "Grouped product"
+      ),
+      array(
+        "id" => "external",
+        "name" => "External/Affiliate product"
+      ),
+      array(
+        "id" => "variable",
+        "name" => "Variable product"
+      ),
+    );
+
+    return rest_ensure_response($response);
+  }
+
+  public function product_stocks() {
+    $response = array(
+      array(
+        "id" => "instock",
+        "name" => "In stock"
+      ),
+      array(
+        "id" => "outofstock",
+        "name" => "Out of stock"
+      ),
+      array(
+        "id" => "onbackorder",
+        "name" => "On backorder"
+      )
+    );
+
+    return rest_ensure_response($response);
   }
 }

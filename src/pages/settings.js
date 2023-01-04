@@ -6,6 +6,7 @@ import { AppLocalizeContext } from "../App";
 
 export default () => {
   const appLocalizer = useContext(AppLocalizeContext)
+  const __ = wp.i18n.__
 
   const settings = useSelector((state) => state.settings)
   const dispatch = useDispatch()
@@ -80,20 +81,20 @@ export default () => {
 
   return(
     <div className="w-full max-w-4xl mx-auto">
-      <h1 className="!text-xl font-semibold py-4">Let's get you started 🚀</h1>
+      <h1 className="!text-xl font-semibold py-4">{__('Welcome to Woocommerce product tab 🚀' ,'woo-product-tab')}</h1>
       <div className="mt-4">
         <div className="relative">
           <div className="w-full bg-white rounded shadow p-4 space-y-4">
             <div className="mb-6">
               <span className="text-gray-800">
-                See the{" "}
+                {__('See the' ,'woo-product-tab')}{" "}
                 <a
                   href="https://woocommerce.com/document/woocommerce-rest-api/"
                   className="text-blue-600"
                 >
-                  Guide
+                  {__('Guide' ,'woo-product-tab')}
                 </a>{" "}
-                htmlFor how to generate consumer_key and consumer_secret
+                {__('htmlFor how to generate consumer_key and consumer_secret' ,'woo-product-tab')}
               </span>
             </div>
             <div className="mb-6">
@@ -148,7 +149,7 @@ export default () => {
               type="submit"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
             >
-              Submit
+              {__('Submit' ,'woo-product-tab')}
             </button>
           </div>
 

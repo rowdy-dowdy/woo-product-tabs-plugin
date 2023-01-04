@@ -53,6 +53,7 @@ class VI_WOO_PRODUCT_TABS_Admin_Settings {
     // wp_enqueue_script('wpt-react-settings', VI_WOO_PRODUCT_TABS_DIST. "assets/bundle.js", array(), '1.0', false);
     wp_localize_script('wpt-react-settings', 'wptAppLocalizer', [
       'apiURL' => home_url('/wp-json'),
+      'adminURL' => get_admin_url(),
       'nonce' => wp_create_nonce('wp_rest'),
       'customizeURL' => wp_customize_url()
     ]);

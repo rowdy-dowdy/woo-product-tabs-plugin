@@ -42,7 +42,7 @@ export default () => {
           isActive ? activeStyle : undefined
         }
       >
-        Three
+        Canvas 3D
       </NavLink>
     </div>
   )

@@ -7,42 +7,46 @@ var wptTabMainFunc = () => {
 
   parents.forEach(parent => {
     // variable
-    let wpt_tabs_value = parent.querySelector('.product-tabs-value')
+    let tabs_value = parent.querySelector('.product-tabs-value')
     
-    let wpt_list          = parent.querySelector('.wpt-list')
-    let wpt_btn_add       = parent.querySelector('.wpt-btn-add')
+    let list          = parent.querySelector('.wpt-list')
+    let btn_add       = parent.querySelector('.wpt-btn-add')
 
-    let wpt_modal_edit                   = parent.querySelector('.wpt-modal-edit')
-    let wpt_modal_tab_id                 = wpt_modal_edit.querySelector('.wpt-modal-tab-id')
-    let wpt_modal_checkbox_active        = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active')
-    let wpt_modal_checkbox_active_mobile = wpt_modal_edit.querySelector('.wpt-modal-checkbox-active-mobile')
-    let wpt_modal_id                     = wpt_modal_edit.querySelector('.wpt-modal-id')
-    let wpt_modal_title                  = wpt_modal_edit.querySelector('.wpt-modal-title')
-    let wpt_modal_icons                  = wpt_modal_edit.querySelectorAll('.list-icon .item-icon')
-    let wpt_modal_display                = wpt_modal_edit.querySelector('.wpt-modal-display')
-    let wpt_btn_close_modal_edit         = wpt_modal_edit.querySelector('.btn-del')
+    let modal_edit                   = parent.querySelector('.wpt-modal-edit')
+    let modal_tab_id                 = modal_edit.querySelector('.wpt-modal-tab-id')
+    let modal_checkbox_active        = modal_edit.querySelector('.wpt-modal-checkbox-active')
+    let modal_checkbox_active_mobile = modal_edit.querySelector('.wpt-modal-checkbox-active-mobile')
+    let modal_id                     = modal_edit.querySelector('.wpt-modal-id')
+    let modal_title                  = modal_edit.querySelector('.wpt-modal-title')
+    let modal_icons                  = modal_edit.querySelectorAll('.list-icon .item-icon')
+    let modal_display                = modal_edit.querySelector('.wpt-modal-display')
+    let btn_close_modal_edit         = modal_edit.querySelector('.btn-del')
 
-    let wpt_modal_roles                  = wpt_modal_edit.querySelector('.wpt-modal-roles')
-    let wpt_input_apis                   = wpt_modal_edit.querySelectorAll('.wpt-input-api')
+    let modal_rules                     = modal_edit.querySelector('.wpt-modal-rules')
+    let input_apis                      = modal_edit.querySelectorAll('.wpt-input-api')
+    let modal_product_description       = modal_edit.querySelector('.wpt-modal-product-description')
+    let modal_product_short_description = modal_edit.querySelector('.wpt-modal-product-short-description')
+    let modal_virtual                   = modal_edit.querySelector('.wpt-modal-virtual')
+    let modal_sale                      = modal_edit.querySelector('.wpt-modal-sale')
     
-    let wpt_modal_child_edit             = parent.querySelector('.wpt-modal-edit-child')
+    let modal_child_edit             = parent.querySelector('.wpt-modal-edit-child')
 
-    let event = new CustomEvent('change', {'detail': wpt_tabs_value})
+    let event = new CustomEvent('change', {'detail': tabs_value})
 
     // TODO: default value
-    let list_tab_default = JSON.parse(wpt_tabs_value.value || '[]')
+    let list_tab_default = JSON.parse(tabs_value.value || '[]')
 
     let item_key = 0
     let list_tab = new Proxy({data: list_tab_default.sort((a,b) => a.position - b.position)}, {
       set: function(target, prop, val, receiver) {
         target[prop] = val
 
-        if (wpt_tabs_value) {
-          wpt_tabs_value.value = JSON.stringify(val)
+        if (tabs_value) {
+          tabs_value.value = JSON.stringify(val)
 
           console.log(val)
           
-          wpt_tabs_value.dispatchEvent(event)
+          tabs_value.dispatchEvent(event)
         }
 
         return true;
@@ -95,8 +99,8 @@ var wptTabMainFunc = () => {
     }
 
     // sortable
-    if (wpt_list) {
-      let wpt_sortable = Sortable.create(wpt_list, {
+    if (list) {
+      let sortable = Sortable.create(list, {
         animation: 150,
         handle: '.handle',
         ghostClass: 'blue-bg-class',
@@ -114,8 +118,8 @@ var wptTabMainFunc = () => {
     }
 
     // add sortable
-    if (wpt_btn_add) {
-      wpt_btn_add.addEventListener('click', e => {
+    if (btn_add) {
+      btn_add.addEventListener('click', e => {
         e.preventDefault()
         e.stopPropagation()
 
@@ -136,7 +140,7 @@ var wptTabMainFunc = () => {
 
         addEventToItem(item)
 
-        wpt_list.appendChild(item)
+        list.appendChild(item)
 
         list_tab.data.push({
           id: id,
@@ -182,8 +186,8 @@ var wptTabMainFunc = () => {
             parent.remove()
 
             // close modal
-            if (wpt_modal_tab_id.value == id_temp) {
-              wpt_modal_edit.classList.add('hide')
+            if (modal_tab_id.value == id_temp) {
+              modal_edit.classList.add('hide')
             }
           }
         })
@@ -199,17 +203,17 @@ var wptTabMainFunc = () => {
       if (btn_active) {
         let id_temp = btn_active.dataset.id
         btn_active.addEventListener('change', e => {
-          let temp_item_tab_index = list_tab.data.findIndex(v => v.id == id_temp)
+          let index_item_tab = list_tab.data.findIndex(v => v.id == id_temp)
 
-          if (temp_item_tab_index >= 0) {
-            list_tab.data[temp_item_tab_index].active = e.currentTarget.checked
+          if (index_item_tab >= 0) {
+            list_tab.data[index_item_tab].active = e.currentTarget.checked
             list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
 
-            if (wpt_modal_tab_id.value == id_temp) {
-              wpt_modal_checkbox_active.checked = e.currentTarget.checked
+            if (modal_tab_id.value == id_temp) {
+              modal_checkbox_active.checked = e.currentTarget.checked
 
-              if (wpt_modal_checkbox_active_mobile) {
-                wpt_modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
+              if (modal_checkbox_active_mobile) {
+                modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
               }
             }
           }
@@ -218,116 +222,165 @@ var wptTabMainFunc = () => {
     }
 
     let openModalEdit = (id) => (event) => {
-      if (!wpt_modal_edit) return
+      if (!modal_edit) return
 
-      if (wpt_modal_tab_id) {
-        let temp_item_tab = list_tab.data.find(v => v.id == id)
+      if (modal_tab_id) {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == id)
 
-        if (!temp_item_tab) return
+        if (index_item_tab < 0) return
         
-        wpt_modal_tab_id.value = id
-        wpt_modal_checkbox_active.checked = temp_item_tab.active
-        wpt_modal_checkbox_active_mobile.checked = temp_item_tab.mobile_active
-        wpt_modal_checkbox_active_mobile.disabled = !temp_item_tab.active
-        wpt_modal_id.value = temp_item_tab.id
-        wpt_modal_title.value = temp_item_tab.title
+        modal_tab_id.value                    = id
+        modal_checkbox_active.checked         = list_tab.data[index_item_tab].active
+        modal_checkbox_active_mobile.checked  = list_tab.data[index_item_tab].mobile_active
+        modal_checkbox_active_mobile.disabled = !list_tab.data[index_item_tab].active
+        modal_id.value                        = list_tab.data[index_item_tab].id
+        modal_title.value                     = list_tab.data[index_item_tab].title
 
-        let none_icon_html = temp_item_tab.icon || `<i class="bx bx-block"></i>`
-        wpt_modal_icons.forEach(icon => {
+        let none_icon_html = list_tab.data[index_item_tab].icon || `<i class="bx bx-block"></i>`
+        modal_icons.forEach(icon => {
           icon.classList.remove('active')
           if (none_icon_html == icon.firstChild.innerHTML.toString().trim()) {
             icon.classList.add('active')
           }
         })
 
-        wpt_modal_display.value = temp_item_tab.display
+        modal_display.value = list_tab.data[index_item_tab].display
 
-        if (temp_item_tab.display == "rules") {
-          if (wpt_modal_roles)
-            wpt_modal_roles.classList.remove('hide')
+        if (list_tab.data[index_item_tab].display == "rules") {
+          if (modal_rules)
+            modal_rules.classList.remove('hide')
         }
         else {
-          if (wpt_modal_roles)
-            wpt_modal_roles.classList.add('hide')
+          if (modal_rules)
+            modal_rules.classList.add('hide')
         }
 
-        wpt_input_apis.forEach(v => {
-          let url       = v.dataset.url
-          let title_key = v.dataset.title_key
-          let role_key  = v.dataset.role_key
+        for (const v of input_apis) {
+          openModalEditRuleInputApis(v, index_item_tab)
+        }
 
-          let input_quick_add = v.querySelector('.input-quick-add')
-          let list_add        = v.querySelector('.list-add')
-
-          let input_modal = v.querySelector('.input-modal')
-          let search_list = v.querySelector('.search-list')
-
-          let role = temp_item_tab.role || {}
-          let list_item = role[role_key] || []
-
-          if (list_item.length == 0) {
-            search_list.innerHTML = __('Chưa chọn', 'woo-product-tab')
-          }
-          else {
-            console.log(list_item)
-          }
-        })
+        let rules = list_tab.data[index_item_tab].rules || {}
+        
+        modal_product_description.value       = (typeof rules.product_description !== 'undefined') ? rules.product_description : 'none'
+        modal_product_short_description.value = (typeof rules.product_short_description !== 'undefined') ? rules.product_short_description : 'none'
+        modal_virtual.value                   = (typeof rules.virtual !== 'undefined') ? rules.virtual : 'none'
+        modal_sale.value                      = (typeof rules.sale !== 'undefined') ? rules.sale : 'none'
       }
 
-      wpt_modal_edit.classList.remove('hide')
-      wpt_modal_child_edit.classList.add('hide')
+      modal_edit.classList.remove('hide')
+      modal_child_edit.classList.add('hide')
+    }
+
+    openModalEditRuleInputApis = async (v, index_item_tab) => {
+      let url       = v.dataset.url
+      let title_key = v.dataset.title_key
+      let rule_key  = v.dataset.rule_key
+
+      let input_quick_add = v.querySelector('.input-quick-add')
+      let list_add        = v.querySelector('.list-add')
+
+      let input_modal = v.querySelector('.input-modal')
+      let search_list = v.querySelector('.search-list')
+
+      let rules = list_tab.data[index_item_tab].rules || {}
+      let list_item = rules[rule_key] || []
+
+      if (list_item.length == 0) {
+        list_add.innerText = __('Not selected yet', 'woo-product-tab')
+      }
+      else {
+        list_add.innerText = __('Loading...', 'woo-product-tab')
+        let data = await fetchData(`${url}`, `include=${list_item.toString()}`)
+
+        if (data.length == 0) {
+          list_add.innerText = __('Not selected yet', 'woo-product-tab')
+
+          list_item = []
+        }
+        else {
+          let item_text = ''
+          list_item.forEach((v2, i2) => {
+            let index_data = data.findIndex(c => c.id == v2)
+            if (index_data >= 0) {
+              item_text += `
+                <div class="list-item" data-id="${v2}">
+                  <i class='bx bx-x'></i>
+                  ${data[index_data][title_key] || __('Empty', 'woo-product-tab')}
+                </div>
+              `
+            }
+            else {
+              list_item.splice(i2, 1)
+            }
+          })
+
+          list_add.innerHTML = item_text
+
+          let list_item_dels = list_add.querySelectorAll('i')
+          list_item_dels.forEach(v3 => {
+            addEventListItemDel(v3)
+          })
+        }
+
+        rules = {
+          ...rules,
+          [rule_key]: list_item
+        }
+
+        list_tab.data[index_item_tab].rules = rules
+      }
     }
 
     let addEventToModal = () => {
       // edit modal
-      wpt_modal_checkbox_active.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+      modal_checkbox_active.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-        if (temp_item_tab_index >= 0) {
-          list_tab.data[temp_item_tab_index].active = e.currentTarget.checked
+        if (index_item_tab >= 0) {
+          list_tab.data[index_item_tab].active = e.currentTarget.checked
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
 
-          let temp_tab_active = parent.querySelector(`.wpt-list > li > .item .form-check[data-id="${wpt_modal_tab_id.value}"]`)
+          let temp_tab_active = parent.querySelector(`.wpt-list > li > .item .form-check[data-id="${modal_tab_id.value}"]`)
           if (temp_tab_active) {
             temp_tab_active.checked = e.currentTarget.checked
           }
 
-          if (wpt_modal_checkbox_active_mobile) {
-            wpt_modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
+          if (modal_checkbox_active_mobile) {
+            modal_checkbox_active_mobile.disabled = !e.currentTarget.checked
           }
         }
       })
 
-      wpt_modal_checkbox_active_mobile.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+      modal_checkbox_active_mobile.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-        if (temp_item_tab_index >= 0) {
-          list_tab.data[temp_item_tab_index].mobile_active = e.currentTarget.checked
+        if (index_item_tab >= 0) {
+          list_tab.data[index_item_tab].mobile_active = e.currentTarget.checked
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         }
       })
 
-      wpt_modal_title.addEventListener('blur', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+      modal_title.addEventListener('blur', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-        if (temp_item_tab_index >= 0) {
-          list_tab.data[temp_item_tab_index].title = e.target.value
+        if (index_item_tab >= 0) {
+          list_tab.data[index_item_tab].title = e.target.value
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         }
       })
 
-      wpt_modal_icons.forEach(icon => {
+      modal_icons.forEach(icon => {
         icon.addEventListener('click', e => {
-          let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+          let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-          if (temp_item_tab_index >= 0) {
-            wpt_modal_icons.forEach(v => {
+          if (index_item_tab >= 0) {
+            modal_icons.forEach(v => {
               v.classList.remove('active')
             })
 
             let icon_text = icon.firstChild.innerHTML.toString().trim()
 
-            list_tab.data[temp_item_tab_index].icon = icon_text == `<i class="bx bx-block"></i>` ? '' : icon_text
+            list_tab.data[index_item_tab].icon = icon_text == `<i class="bx bx-block"></i>` ? '' : icon_text
             list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
 
             icon.classList.add('active')
@@ -335,33 +388,95 @@ var wptTabMainFunc = () => {
         })
       })
 
-      wpt_modal_display.addEventListener('change', e => {
-        let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+      modal_display.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-        if (temp_item_tab_index >= 0) {
+        if (index_item_tab >= 0) {
           if (e.currentTarget.value == "rules") {
-            if (wpt_modal_roles)
-              wpt_modal_roles.classList.remove('hide')
+            if (modal_rules)
+              modal_rules.classList.remove('hide')
           }
           else {
-            if (wpt_modal_roles)
-              wpt_modal_roles.classList.add('hide')
+            if (modal_rules)
+              modal_rules.classList.add('hide')
           }
 
-          list_tab.data[temp_item_tab_index].display = e.currentTarget.value
+          list_tab.data[index_item_tab].display = e.currentTarget.value
           list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
         }
       })
 
       // close modal
-      if (wpt_btn_close_modal_edit) {
-        wpt_btn_close_modal_edit.addEventListener('click', e => {
-          wpt_modal_edit.classList.add('hide')
+      if (btn_close_modal_edit) {
+        btn_close_modal_edit.addEventListener('click', e => {
+          modal_edit.classList.add('hide')
         })
       }
 
-      wpt_input_apis.forEach(item => {
+      input_apis.forEach(item => {
         addEventInputApi(item)
+      })
+
+      modal_product_description.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
+        
+        if (index_item_tab >= 0) {
+          let rules = list_tab.data[index_item_tab].rules || {}
+
+          rules = {
+            ...rules,
+            product_description: e.currentTarget.value
+          }
+          list_tab.data[index_item_tab].rules = rules
+          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+
+          console.log(rules, list_tab.data)
+        }
+      })
+
+      modal_product_short_description.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
+        
+        if (index_item_tab >= 0) {
+          let rules = list_tab.data[index_item_tab].rules || {}
+
+          rules = {
+            ...rules,
+            product_short_description: e.currentTarget.value
+          }
+          list_tab.data[index_item_tab].rules = rules
+          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+        }
+      })
+
+      modal_virtual.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
+        
+        if (index_item_tab >= 0) {
+          let rules = list_tab.data[index_item_tab].rules || {}
+
+          rules = {
+            ...rules,
+            virtual: e.currentTarget.value
+          }
+          list_tab.data[index_item_tab].rules = rules
+          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+        }
+      })
+
+      modal_sale.addEventListener('change', e => {
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
+        
+        if (index_item_tab >= 0) {
+          let rules = list_tab.data[index_item_tab].rules || {}
+
+          rules = {
+            ...rules,
+            sale: e.currentTarget.value
+          }
+          list_tab.data[index_item_tab].rules = rules
+          list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+        }
       })
     }
 
@@ -377,19 +492,58 @@ var wptTabMainFunc = () => {
       }
     }
 
-    let fetchData = (url, consumer_key, consumer_secret) => {
+    let fetchData = (url, param) => {
       return new Promise(async res => {
-        await fetch(`${url}?consumer_key=${consumer_key}&consumer_secret=${consumer_secret}`)
+        await fetch(`${url}?consumer_key=${app.consumer_key}&consumer_secret=${app.consumer_secret}&${param || ''}`)
         .then(res => res.json())
         .then(data => res(data))
         .catch(error => res([]))
+      })
+    }
+
+    let addEventListItemDel = (el) => {
+      el.addEventListener('click', e => {
+        e.stopPropagation()
+
+        let parent = el.closest('.list-item')
+        let id = parent.dataset.id || null
+
+        let rule_key  = parent.closest('.wpt-input-api').dataset.rule_key || null
+
+        if (!rule_key  || !id) return
+
+        let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
+
+        if (index_item_tab >= 0) {
+          let rules = list_tab.data[index_item_tab].rules || {}
+
+          if (!(rules[rule_key] || []).includes(value.id)) {
+            let list_in_row = (rules[rule_key] || [])
+
+            let index_rule_key = list_in_row.findIndex(c => c == id)
+
+            if (index_rule_key < 0) return
+            
+            list_in_row.splice(index_rule_key, 1)
+
+            rules = {
+              ...rules,
+              [rule_key]: list_in_row
+            }
+
+            list_tab.data[index_item_tab].rules = rules
+            list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
+
+            parent.remove()
+          }
+        }
       })
     }
     
     let addEventInputApi = (el) => {
       let url       = el.dataset.url
       let title_key = el.dataset.title_key
-      let role_key  = el.dataset.role_key
+      let rule_key  = el.dataset.rule_key
     
       let input_quick_add = el.querySelector('.input-quick-add')
       let list_add        = el.querySelector('.list-add')
@@ -415,8 +569,7 @@ var wptTabMainFunc = () => {
 
         //* fetch data
         search_list.classList.add('loading')
-        let data = await fetchData(url, app.consumer_key, app.consumer_secret)
-        search_list.classList.remove('loading')
+        let data = await fetchData(url)
 
         let text_childs = ''
 
@@ -434,32 +587,45 @@ var wptTabMainFunc = () => {
         childs.forEach(v => {
           v.addEventListener('click', e => {
             let value = data.find(i => i.id == v.dataset.id)
-            let temp_item_tab_index = list_tab.data.findIndex(v => v.id == wpt_modal_tab_id.value)
+            let index_item_tab = list_tab.data.findIndex(v => v.id == modal_tab_id.value)
 
-            if (temp_item_tab_index >= 0) {
-              let role = list_tab.data[temp_item_tab_index].role || {}
+            if (index_item_tab >= 0) {
+              let rules = list_tab.data[index_item_tab].rules || {}
 
-              if (!(role[role_key] || []).includes(value.id)) {
-                let new_list_in_row = (role[role_key] || [])
+              if (!(rules[rule_key] || []).includes(value.id)) {
+                let new_list_in_row = (rules[rule_key] || [])
                 new_list_in_row.push(value.id)
 
-                role = {
-                  ...role,
-                  [role_key]: new_list_in_row
+                rules = {
+                  ...rules,
+                  [rule_key]: new_list_in_row
                 }
 
-                list_tab.data[temp_item_tab_index].role = role
+                list_tab.data[index_item_tab].rules = rules
                 list_tab.data = JSON.parse(JSON.stringify(list_tab.data))
   
                 let list_item = document.createElement("div")
                 list_item.classList.add('list-item')
-                list_item.innerText = value.name
+                list_item.innerHTML = `
+                  <i class='bx bx-x'></i>
+                  ${value.name}
+                `
+
+                let list_item_del = list_item.querySelector('i')
+                if (list_item_del)
+                  addEventListItemDel(list_item_del)
+
+                if (list_add.innerText == __('Not selected yet', 'woo-product-tab')) {
+                  list_add.innerHTML = ''
+                }
       
                 list_add.appendChild(list_item)
               }
             }
           })
         })
+
+        search_list.classList.remove('loading')
 
         search_list.innerHTML = ''
         search_list.appendChild(item)
@@ -524,22 +690,22 @@ var wptTabMainFunc = () => {
 
       addEventToItem(item)
 
-      wpt_list.appendChild(item)
+      list.appendChild(item)
 
       tab.position = item_key++
     })
 
     // ! list tab child
     // TODO: letiable elements list tab child
-    let wpt_list_child    = wpt_list.querySelector('.wpt-list-child')
-    let wpt_btn_add_child = wpt_list.querySelector('.wpt-btn-add-child')
-    let wpt_btn_close_modal_child_edit = wpt_modal_child_edit.querySelector('.btn-del')
-    let wpt_modal_tab_child_id = wpt_modal_child_edit.querySelector('.wpt-modal-tab-child-id')
-    let wpt_btn_save_child_content = wpt_modal_child_edit.querySelector('.wpt-btn-save-child-content')
+    let list_child    = list.querySelector('.wpt-list-child')
+    let btn_add_child = list.querySelector('.wpt-btn-add-child')
+    let btn_close_modal_child_edit = modal_child_edit.querySelector('.btn-del')
+    let modal_tab_child_id = modal_child_edit.querySelector('.wpt-modal-tab-child-id')
+    let btn_save_child_content = modal_child_edit.querySelector('.wpt-btn-save-child-content')
 
     // TODO: event to tab list child
-    if (wpt_list_child) {
-      let wpt_sortable_child = Sortable.create(wpt_list_child, {
+    if (list_child) {
+      let sortable_child = Sortable.create(list_child, {
         // group: 'nested',
         animation: 150,
         handle: '.handle',
@@ -564,8 +730,8 @@ var wptTabMainFunc = () => {
 
     // TODO: event to child tab list
     // add sortable child
-    if (wpt_btn_add_child) {
-      wpt_btn_add_child.addEventListener('click', e => {
+    if (btn_add_child) {
+      btn_add_child.addEventListener('click', e => {
         e.preventDefault()
         e.stopPropagation()
 
@@ -595,7 +761,7 @@ var wptTabMainFunc = () => {
 
         addEventToItemChild(item)
 
-        wpt_list_child.appendChild(item)
+        list_child.appendChild(item)
 
         list_tab_child.push({
           id: id,
@@ -639,8 +805,8 @@ var wptTabMainFunc = () => {
             parent.remove()
 
             // colse modal
-            if (wpt_modal_tab_child_id.value == id_temp) {
-              wpt_modal_child_edit.classList.add('hide')
+            if (modal_tab_child_id.value == id_temp) {
+              modal_child_edit.classList.add('hide')
             }
           }
         })
@@ -669,23 +835,23 @@ var wptTabMainFunc = () => {
     }
 
     let openModalChildEdit = (id) => (event) => {
-      if (!wpt_modal_child_edit) return
+      if (!modal_child_edit) return
 
-      if (wpt_modal_tab_child_id && wpt_modal_tab_child_id.value != id) {
-        wpt_modal_tab_child_id.value = id
+      if (modal_tab_child_id && modal_tab_child_id.value != id) {
+        modal_tab_child_id.value = id
 
         let index_tab_child = list_tab_child.findIndex(v => v.id == id)
         tinymce.get("wpt_modal_tab_child_content").setContent(list_tab_child[index_tab_child].content)
       }
 
-      wpt_modal_edit.classList.add('hide')
-      wpt_modal_child_edit.classList.remove('hide')
+      modal_edit.classList.add('hide')
+      modal_child_edit.classList.remove('hide')
     }
 
     let addEventToModalChild = () => {
-      if (wpt_btn_save_child_content) {
-        wpt_btn_save_child_content.addEventListener('click', _ => {
-          let index_tab_child = list_tab_child.findIndex(v => v.id == wpt_modal_tab_child_id.value)
+      if (btn_save_child_content) {
+        btn_save_child_content.addEventListener('click', _ => {
+          let index_tab_child = list_tab_child.findIndex(v => v.id == modal_tab_child_id.value)
 
           if (index_tab_child >= 0) {
             list_tab_child[index_tab_child].content = tinymce.get("wpt_modal_tab_child_content").getContent()
@@ -697,9 +863,9 @@ var wptTabMainFunc = () => {
       }
 
       // close modal
-      if (wpt_btn_close_modal_child_edit) {
-        wpt_btn_close_modal_child_edit.addEventListener('click', e => {
-          wpt_modal_child_edit.classList.add('hide')
+      if (btn_close_modal_child_edit) {
+        btn_close_modal_child_edit.addEventListener('click', e => {
+          modal_child_edit.classList.add('hide')
         })
       }
     }
@@ -751,7 +917,7 @@ var wptTabMainFunc = () => {
 
       addEventToItemChild(item)
 
-      wpt_list_child.appendChild(item)
+      list_child.appendChild(item)
 
       v.position = item_key_child++
     })
@@ -774,8 +940,8 @@ var wptTabMainFunc = () => {
       })
 
       //resize modal
-      let wpt_left_side = document.querySelector('#customize-controls')
-      let wpt_resizeObserver = new ResizeObserver((entries) => {
+      let left_side = document.querySelector('#customize-controls')
+      let resizeObserver = new ResizeObserver((entries) => {
         let temp_size = 300;
         for (let entry of entries) {
           if (entry.contentBoxSize) {
@@ -788,9 +954,9 @@ var wptTabMainFunc = () => {
           }
         }
 
-        wpt_modal_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
-        wpt_modal_child_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
-      }).observe(wpt_left_side)
+        modal_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
+        modal_child_edit.style.setProperty("--left-width", temp_size + 1 + 'px');
+      }).observe(left_side)
     }
 
     addEventOnLoad()

@@ -12,11 +12,6 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
   public $type = 'tabs_field';
   public $parent;
   public $default_value;
-  // public $uniqid ;
-
-  // public function generate_uniqid() {
-  //   $this->uniqid = uniqid('tabs_field_');
-  // }
 
   public function enqueue() {
     wp_enqueue_style( 'wpt-box-icon', VI_WOO_PRODUCT_TABS_CSS.'boxicons.min.css');
@@ -46,7 +41,6 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
   // }
 
   public function render_content() {
-    // $this->generate_uniqid();
     $input_id         = '_customize-input-' . $this->id;
 
     $product_tabs = $this->value();
@@ -175,12 +169,12 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                 <tr style="height: 1rem;"></tr>
               </tbody>
 
-              <tbody class="wpt-modal-roles hide">
+              <tbody class="wpt-modal-rules hide">
                 <tr><td colspan="2"><b><?php echo __('Rules') ?></b></td></tr>
                 <tr>
                   <td><?php echo __( 'Product description', 'woo-product-tabs' ) ?></td>
                   <td>
-                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                    <select name="wpt_modal_product_description" class="wpt-modal-product-description custom">
                       <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
                       <option value="empty"><?php echo __( 'Empty', 'woo-product-tabs' ) ?></option>
                       <option value="not_empty"><?php echo __( 'Not empty', 'woo-product-tabs' ) ?></option>
@@ -190,7 +184,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                 <tr>
                   <td><?php echo __( 'Product short description', 'woo-product-tabs' ) ?></td>
                   <td>
-                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                    <select name="wpt_modal_product_short_description" class="wpt-modal-product-short-description custom">
                       <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
                       <option value="empty"><?php echo __( 'Empty', 'woo-product-tabs' ) ?></option>
                       <option value="not_empty"><?php echo __( 'Not empty', 'woo-product-tabs' ) ?></option>
@@ -202,9 +196,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                   <td>
                     <div 
                       class="wpt-input-api" 
-                      data-url="<?php echo home_url('/')?>"
+                      data-url="<?php echo home_url('/wp-json/wpt/v1/product/types')?>"
                       data-title_key="name"
-                      data-role_key="product_type_in"
+                      data-rule_key="product_type_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -219,9 +213,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                   </td>
                 </tr>
                 <tr>
-                  <td><?php echo __( 'Is vitural', 'woo-product-tabs' ) ?></td>
+                  <td><?php echo __( 'Is virtual', 'woo-product-tabs' ) ?></td>
                   <td>
-                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                    <select name="wpt_modal_virtual" class="wpt-modal-virtual custom">
                       <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
                       <option value="yes"><?php echo __( 'Yes', 'woo-product-tabs' ) ?></option>
                       <option value="no"><?php echo __( 'No', 'woo-product-tabs' ) ?></option>
@@ -231,7 +225,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                 <tr>
                   <td><?php echo __( 'Is on sale', 'woo-product-tabs' ) ?></td>
                   <td>
-                    <select name="wpt_modal_display" class="wpt-modal-display custom">
+                    <select name="wpt_modal_sale" class="wpt-modal-sale custom">
                       <option value="none" selected><?php echo __( 'None', 'woo-product-tabs' ) ?></option>
                       <option value="yes"><?php echo __( 'Yes', 'woo-product-tabs' ) ?></option>
                       <option value="no"><?php echo __( 'No', 'woo-product-tabs' ) ?></option>
@@ -243,9 +237,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                   <td>
                     <div 
                       class="wpt-input-api" 
-                      data-url="<?php echo home_url('/')?>"
+                      data-url="<?php echo home_url('/wp-json/wpt/v1/product/stocks')?>"
                       data-title_key="name"
-                      data-role_key="stock_in_status"
+                      data-rule_key="stock_in_status"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -266,7 +260,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                       class="wpt-input-api" 
                       data-url="<?php echo home_url('/wp-json/wc/v3/products')?>"
                       data-title_key="name"
-                      data-role_key="product_in"
+                      data-rule_key="product_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -287,7 +281,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                       class="wpt-input-api" 
                       data-url="<?php echo home_url('/wp-json/wc/v3/products')?>"
                       data-title_key="name"
-                      data-role_key="product_not_in"
+                      data-rule_key="product_not_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -308,7 +302,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                       class="wpt-input-api" 
                       data-url="<?php echo home_url('/wp-json/wc/v3/products/categories')?>"
                       data-title_key="name"
-                      data-role_key="category_in"
+                      data-rule_key="category_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -329,7 +323,7 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                       class="wpt-input-api" 
                       data-url="<?php echo home_url('/wp-json/wc/v3/products/categories')?>"
                       data-title_key="name"
-                      data-role_key="category_not_in"
+                      data-rule_key="category_not_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -348,9 +342,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                   <td>
                     <div 
                       class="wpt-input-api" 
-                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tag')?>"
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tags')?>"
                       data-title_key="name"
-                      data-role_key="tag_in"
+                      data-rule_key="tag_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">
@@ -369,9 +363,9 @@ class Tabs_Field_Custom_Control extends WP_Customize_Control {
                   <td>
                     <div 
                       class="wpt-input-api" 
-                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tag')?>"
+                      data-url="<?php echo home_url('/wp-json/wc/v3/products/tags')?>"
                       data-title_key="name"
-                      data-role_key="tag_not_in"
+                      data-rule_key="tag_not_in"
                     >
                       <input type="text" class="input-value sr-only">
                       <div class="input-quick-add">

@@ -41,7 +41,7 @@ class Range_Field_Custom_Control extends WP_Customize_Control {
           id="<?php echo esc_attr( $input_id ); ?>" min="8" max="40"
           value="<?php echo esc_attr( $this->value() ); ?>"
           <?php $this->link(); ?>
-          data-default="<?php echo $this->value() ? esc_attr( $this->value() ) : ($this->default_value ? $this->default_value : 16) ?>"
+          data-default="<?php echo ($this->default_value ? $this->default_value : esc_attr( $this->value())) ?>"
         >
         <input type="text" class="custom-input-text" value="<?php echo esc_attr( $this->value() ); ?>">
         <span class="icon reset">

@@ -93,13 +93,14 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 			// 'type'              => 'option',
 			// 'capability'        => 'manage_options',
 			// 'sanitize_callback' => 'sanitize_text_field',
-			'transport'         => 'refresh',
+			'transport'         => 'postMessage',
 		) );
 		$wp_customize->add_control( new Range_Field_Custom_Control(
       $wp_customize, 'wpt_product_tabs_params[wpt_title_normal_font_size]',
       array(
-        'label'   => __( 'Font size', 'woo-product-tabs' ),
-        'section' => 'wpt_product_tabs_design',
+        'label'         => __( 'Font size', 'woo-product-tabs' ),
+        'section'       => 'wpt_product_tabs_design',
+        'default_value' => 16
       )
     ) );
 
@@ -114,8 +115,9 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 		$wp_customize->add_control( new Range_Field_Custom_Control(
       $wp_customize, 'wpt_product_tabs_params[wpt_title_normal_icon_font_size]',
       array(
-        'label'   => __( 'Font size', 'woo-product-tabs' ),
-        'section' => 'wpt_product_tabs_design',
+        'label'         => __( 'Icon font size', 'woo-product-tabs' ),
+        'section'       => 'wpt_product_tabs_design',
+        'default_value' => 24
       )
     ) );
 
@@ -192,8 +194,9 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 		$wp_customize->add_control( new Range_Field_Custom_Control(
       $wp_customize, 'wpt_product_tabs_params[wpt_title_active_font_size]',
       array(
-        'label'   => __( 'Font size', 'woo-product-tabs' ),
-        'section' => 'wpt_product_tabs_design',
+        'label'         => __( 'Font size', 'woo-product-tabs' ),
+        'section'       => 'wpt_product_tabs_design',
+        'default_value' => 16
       )
     ) );
 
@@ -208,8 +211,9 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 		$wp_customize->add_control( new Range_Field_Custom_Control(
       $wp_customize, 'wpt_product_tabs_params[wpt_title_active_icon_font_size]',
       array(
-        'label'   => __( 'Font size', 'woo-product-tabs' ),
-        'section' => 'wpt_product_tabs_design',
+        'label'         => __( 'Font size', 'woo-product-tabs' ),
+        'section'       => 'wpt_product_tabs_design',
+        'default_value' => 24
       )
     ) );
 
@@ -270,7 +274,7 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
     $wp_customize->add_control( new Section_Heading_Custom_Control( 
       $wp_customize, 'wpt_heading_tab_content',
       array(
-        'label'   => __( 'Tab title', 'woo-product-tabs' ),
+        'label'   => __( 'Tab content', 'woo-product-tabs' ),
         'section' => 'wpt_product_tabs_design',
       )
     ) );
@@ -372,7 +376,7 @@ class VI_WOO_PRODUCT_TABS_Admin_Design {
 		}
 
     // echo '<script id="wpt-customize-preview-js-core" src="'. includes_url('js/customize-preview.min.js',).'"></script>';
-    echo '<script async id="wpt-alpinejs" src="'. VI_WOO_PRODUCT_TABS_JS.'alpinejs.3.10.5.min.js' .'"></script>';
+    // echo '<script async id="wpt-alpinejs" src="'. VI_WOO_PRODUCT_TABS_JS.'alpinejs.3.10.5.min.js' .'"></script>';
     // echo '<script id="wpt-jquery-core" src="'. includes_url('js/jquery/jquery.min.js',).'"></script>';
     // echo '<script id="wpt-customize-base-js-core" src="'. includes_url('js/customize-base.min.js',).'"></script>';
     // echo '<script id="wpt-lodash-core" src="'. includes_url('js/dist/vendor/lodash.min.js',).'"></script>';

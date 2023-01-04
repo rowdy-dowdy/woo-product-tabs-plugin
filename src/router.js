@@ -5,6 +5,7 @@ import PageLoading from "./components/page_loading";
 const Home = lazy(() => import('./pages/home'));
 const Settings = lazy(() => import('./pages/settings'));
 const Three = lazy(() => import('./pages/three'));
+const Started = lazy(() => import('./pages/started'));
 
 const router = createHashRouter([
   {
@@ -27,6 +28,12 @@ const router = createHashRouter([
         path: "three",
         element: <Suspense fallback={<PageLoading/>}>
           <Three />
+        </Suspense>,
+      },
+      {
+        path: "started",
+        element: <Suspense fallback={<PageLoading/>}>
+          <Started />
         </Suspense>,
       }
     ]

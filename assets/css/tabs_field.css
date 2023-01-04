@@ -244,11 +244,11 @@
   color: #F43F5E;
 }
 
-.wpt-modal-roles {
+.wpt-modal-rules {
   box-shadow: 0 0 0 1px #a8a8a8;
   border-radius: 5px;
 }
-.wpt-modal-roles.hide {
+.wpt-modal-rules.hide {
   display: none;
 }
 
@@ -266,7 +266,8 @@
   border-radius: 4px;
   border: 1px solid #8c8f94;
   background-color: #fff;
-}
+  cursor: pointer;
+} 
 
 .wpt-input-api .input-quick-add .list-add {
   flex-grow: 1;
@@ -279,12 +280,36 @@
 .wpt-input-api .input-quick-add .list-add > * + * { margin-left: .5rem ;}
 
 .wpt-input-api .input-quick-add .list-add .list-item {
+  position: relative;
   flex: none;
   font-size: 12px;
   padding: .25rem;
   border: 1px solid #8c8f94;
   padding: .25rem;
   border-radius: 3px;
+  cursor: default;
+}
+.wpt-input-api .input-quick-add .list-add .list-item i {
+  display: none;
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  place-items: center;
+  border-radius: 50%;
+  background-color: #dc2626;
+  color: #fff;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.wpt-input-api .input-quick-add .list-add .list-item:hover i {
+  display: grid;
+}
+.wpt-input-api .input-quick-add .list-add .list-item i:hover {
+  background-color: #ef4444;
 }
 
 .wpt-input-api .input-quick-add .icon-toggle{
@@ -302,6 +327,7 @@
   border-radius: 4px;
   padding: .25rem .5rem;
   background: #fff;
+  z-index: 1;
 }
 .wpt-input-api .input-modal.top {
   top: initial;
